@@ -1,9 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '~/Screens/HomeScreen'
-import SuggestScreen from '~/Screens/SuggestScreen'
-import MapScreen from '~/Screens/MapScreen'
-import VoteScreen from '~/Screens/VoteScreen'
+import HomeScreen from './HomeScreen'
+import SuggestScreen from './SuggestScreen'
+import MapScreen from './MapScreen'
+import VoteScreen from './VoteScreen'
 
 const Tab = createBottomTabNavigator();
 
