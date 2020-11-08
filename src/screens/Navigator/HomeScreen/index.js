@@ -1,9 +1,28 @@
 import React from 'react'
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import Weather from '~/screens/GetWeather'
+import { ScrollView } from 'react-native-gesture-handler';
+
+import Weather from './Weather'
+
 import Geolocation from 'react-native-geolocation-service'
 import { PermissionsAndroid } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+
+import database from '@react-native-firebase/database'
+
+
+
+const styles = StyleSheet.create({
+
+  container:{
+    flex: 1,
+  },
+  indicator:{
+    flex:1,
+    alignItems:"center",
+    justifyContent: "center",
+  },
+
+});
 
 const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
 
@@ -28,6 +47,12 @@ class HomeScreen extends React.Component{
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     )
+    
+    const reference = database().ref('/season/winter')
+    reference.once("value").then(snapshot => {
+      console.log(snapshot.val());
+    })
+    
   }
 
   //openweather API 호출
@@ -38,7 +63,6 @@ class HomeScreen extends React.Component{
       this.setState({isLoaded: true, weatherId: json.weather[0].id})
     })
   }
-
   //Android 위치 권한 설정
   requestCameraPermission = async () => {
     try {
@@ -74,18 +98,5 @@ class HomeScreen extends React.Component{
     )
   }
 }
-
-const styles = StyleSheet.create({
-
-  container:{
-    flex: 1,
-  },
-  indicator:{
-    flex:1,
-    alignItems:"center",
-    justifyContent: "center",
-  },
-
-});
 
 export default HomeScreen
