@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 
 });
 
-const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
+const API_KEY = ""
 
 class HomeScreen extends React.Component{
   
