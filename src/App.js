@@ -16,8 +16,6 @@ class App extends React.Component{
     )
   }
   
-  
-
   async componentDidMount(){
     
     SplashScreen.hide();
