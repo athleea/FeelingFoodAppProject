@@ -1,27 +1,15 @@
 import React from 'react';
-import Navigator from '~/screens/Navigator'
-
-import SplashScreen from 'react-native-splash-screen';
+import {View} from 'react-native'
+// import Navigator from '~/screens/Navigator'
+import FirstUser from '~/screens/FirstUser'
 
 class App extends React.Component{
 
-  constructor(props){
-    super(props);
-    
-  }
-
   render(){
     return(
-      <Navigator />
+        <FirstUser />
     )
   }
-  
-  async componentDidMount(){
-    
-    SplashScreen.hide();
-    
-  }
-  
 }
 
 

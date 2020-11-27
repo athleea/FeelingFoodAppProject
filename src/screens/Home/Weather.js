@@ -5,16 +5,17 @@ import {PermissionsAndroid} from 'react-native';
 import Styled from 'styled-components/native'
 
 const Container = Styled.View`
-    flex: 1;
+    flexDirection: row;
 `;
 const WeatherItemContainer = Styled.View`
+    flex: 1;
     margin: 10px;
     justify-content: flex-start;
     align-items: flex-start;
 `;
 
 const WeatherLabel = Styled.Text`
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
 `;
 const LoadingView = Styled.View`
@@ -31,7 +32,7 @@ const LoadingLabel = Styled.Text`
     font-size: 16px;
 `;
 
-const API_KEY = ""
+const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
 
 
 
