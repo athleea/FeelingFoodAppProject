@@ -8,9 +8,6 @@ const API_KEY = ""
 const StateContext = createContext();
 const StateContextProvider = ({children}) => {
 
-    const setUser = () =>{
-        setFirstUser("false");
-    }
     const [weatherInfo, setWeatherInfo] = useState({
         granted: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         isLoaded: false,
@@ -52,7 +49,6 @@ const StateContextProvider = ({children}) => {
         await requestLocationPermission();
         Geolocation.getCurrentPosition(
             position => {
-                console.log(position);
                 const {latitude, longitude} = position.coords;
                 setWeatherInfo({
                     latitude: latitude,
@@ -135,7 +131,7 @@ const StateContextProvider = ({children}) => {
     };
 
     useEffect( ()=> {
-        setCurrentWeather();
+        //setCurrentWeather();
     },[])
 
     return(

@@ -18,21 +18,23 @@ const foodName = {
               }
 
 let foodId = 100;
-
+let count = 0;
 const saveData = async() => {
   for(let i=0;i<8;i++){
     for(let j=0;j<foodName[i].length;j++){
         try{
             await storage().ref(`${foodName[i][j]}.jpg`).getDownloadURL().then(res => {
-            database().ref(`/Food/${catagori[i]}/${foodName[i][j]}`).set({
+            database().ref(`/Food/${count}`).set({
                 id: foodId,
                 name : foodName[i][j],
-                url : res
+                url : res,
+                catagori : catagori[i],
             })}
             ).then(() => console.log('Data set.'));
         }catch(e){
             console.log(foodName[i][j]);
         }
+        count += 1;
         foodId += 1;
     }
     foodId = (foodId - (foodId % 100)) + 100;
@@ -41,16 +43,16 @@ const saveData = async() => {
 }
 
 const tagCatagori = ["Emotion","Season","Weather"]
-const tag = [ ["기쁨","슬픔","분노","지루함","놀람","공포","짜증","쓸쓸","어색","답답","흥분","평화","뿌듯","초조","우울"],
+const tag = [ ["기쁠때","슬플때","화날때","지루할때","놀랐을때","무서울때","짜증날때","쓸쓸할떄","어색할때","답답할때","흥분될때","조용할때","뿌듯할때","초조할때","우울할때"],
   ["봄","여름","가을","겨울"],
-  ["맑음","구름","흐림","소나기","비","번개","눈","안개"]
+  ["맑음","구름","흐림","소나기","비","번개","눈"]
 ]
 
 const saveTagData = () => {
   for(let i=0;i<tagCatagori.length;i++){
     for(let j=0;j<tag[i].length;j++){
       database().ref(`/Tag/${tagCatagori[i]}/${tag[i][j]}`).set({
-          100 : 0
+          100 : 1
       }).then( ()=> console.log("Data set"));
     }
   }

@@ -31,7 +31,7 @@ const FoodImage = Styled.Image`
 `;
 let les = ""
 // foodList = json.season.winter
-const FoodImageList = ({tagTitle, foodList}) => {
+const FoodImageList = ({tagName}) => {
   const[data, setData] = useState([]);
 
   useEffect( ()=>{

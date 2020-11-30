@@ -2,27 +2,36 @@ import React from 'react';
 import {Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import Home from './Home'
-import Recommend from './Recommend'
+import Catagori from './Catagori'
 import Map from './Map'
 import Choice from './Choice'
+import Recommend from './Recommend'
 
 // import FirstUser from './FirstUser'
 // import AsyncStorage from '@react-native-community/async-storage';
 
 const BottomTab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const StackHome = () => {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Recommend" component={Recommend} />
+        </Stack.Navigator>
+    )
+}
 
 const MainNavigator = () => {
-
-    
-    
     return (
         <NavigationContainer>
             <BottomTab.Navigator>
                 <BottomTab.Screen
-                    name="Home"
-                    component={Home}
+                    name="StackHome"
+                    component={StackHome}
                     options={{
                         tabBarIcon: ({color, focused}) => (
                             <Image
@@ -34,8 +43,8 @@ const MainNavigator = () => {
                         )
                     }} />
                 <BottomTab.Screen
-                    name="Recommend"
-                    component={Recommend}
+                    name="Catagori"
+                    component={Catagori}
                     options={{
                         tabBarIcon: ({color, focused}) => (
                             <Image
