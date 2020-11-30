@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {Dimensions} from 'react-native';
+import React, { useEffect, useState, useContext} from 'react';
+import {Dimensions, Text, View} from 'react-native';
 
 import SplashScreen from 'react-native-splash-screen';
 
@@ -13,15 +13,6 @@ const Container = Styled.SafeAreaView`
     flex: 1;
     align-items: center;
     justify-content: center;
-`
-const TagContainer = Styled.View`
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-`
-const TagText = Styled.Text`
-    font-size: 20px;
-    font-weight: bold;
 `
 const FoodContainer = Styled.FlatList`
     flex: 5;
@@ -55,8 +46,6 @@ const FirstUser  = () => {
         const tagCatagori = ["Season","Emotion","Weather"]
         let type = getRandomCatagori(tagCatagori)
         setTagType(type);
-        console.log(tagType);
-        
         try{
             database().ref(`/Tag/Season`).once('value')
             .then(snapshot => {
@@ -81,24 +70,27 @@ const FirstUser  = () => {
         }
         setData(list);
     }
-    let saveData = async(id) => {
-        
-        count ++;
-        console.log(count);
-        
+    const saveData = async(id) => {
+        setCount(count+1);
         const reference = database().ref(`/Tag/${tagType}/${tag}/${id}`);
         return await reference.transaction(currentLikes => {
-            if (currentLikes === null) return 1;
+            if (currentLikes === null) {
+                initTag();
+                initFood();
+                return 1;
+            }
+            initTag();
+            initFood();
             return currentLikes + 1;
         });
-        
     }
 
     const [data, setData] = useState([]);
     const [tag, setTag] = useState("");
     const [tagType, setTagType] = useState("");
+    const [count, setCount] = useState(0)
     
-    let count = 0;
+    //let count = 0;
 
     useEffect( ()=> {
         SplashScreen.hide();
@@ -106,12 +98,19 @@ const FirstUser  = () => {
         initFood();
     }, []);
 
+    const ListHeader = () => {
+        return(
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', margin: 20}}>
+                <Text style={{fontSize: 30, fontWeight: "bold"}}>#{tag}</Text>
+            </View>
+        );
+    }
+
     return(
         <Container>
-            <TagContainer>
-                <TagText>#{tag}</TagText>
-            </TagContainer>
             <FoodContainer
+                ListHeaderComponent = {ListHeader}
+                extraData = {count}
                 numColumns = {2}
                 data={data}
                 keyExtractor={(item, index) => {
@@ -121,8 +120,7 @@ const FirstUser  = () => {
                     <FoodImageContainer
                         onPress={() => {
                             saveData(item.id);
-                        }}
-                    >
+                        }}>
                         <FoodImage
                             source={{uri : item.url}}
                             style={{ width: (Dimensions.get('window').width) / 2 - 10, height: 201}} />
@@ -131,7 +129,7 @@ const FirstUser  = () => {
                 )}
             />
         </Container>
-    );    
+    );
 }
 
 export default FirstUser

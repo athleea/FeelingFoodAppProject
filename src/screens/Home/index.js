@@ -1,51 +1,75 @@
-import React from 'react'
-import Weather from './Weather'
-import FoodImageList from './FoodImageList'
-
-import database from '@react-native-firebase/database'
-
+import React, { useEffect, useContext,} from 'react'
+import {Image, Text, View} from 'react-native'
 import SplashScreen from 'react-native-splash-screen';
 
 import Styled from 'styled-components/native'
 
 
+import {StateContext} from '~/Context/State'
+
+
 const Container = Styled.SafeAreaView`
-    flex: 1;
-    backgroundColor: skyblue;
+  justify-content: center;
+  align-items: center;
+  flexDirection: row;
+  background-color: blue;
+`;
+const WeatherItemContainer = Styled.View`
+  flexDirection: row;
+  flex: 1;
+  margin: 10px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  
 `;
 
+const WeatherLabel = Styled.Text`
+  font-size: 20px;
+  font-weight: bold;
+`;
+const LoadingView = Styled.View`
+  margin: 10px;
+  flex: 1;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
 
+const Loading = Styled.ActivityIndicator`
+  margin-bottom: 16px;
+`;
 
+const LoadingLabel = Styled.Text`
+  font-size: 16px;
+`;
 
 const Home = () => {
+  const {weatherInfo} = useContext(StateContext);
 
-  constructor(props){
-    super(props)
-    this.state ={
-      data: [],
-    }
-  }
-
-  
-  
-  componentDidMount(){
-    const reference = database().ref('/season/autumn')
-    reference.once("value").then(snapshot => {
-      console.log(snapshot.val());
-      this.setState({data : snapshot.val()})
-      console.log(this.state.data[0].name);
-    })
+  useEffect( ()=> {
     SplashScreen.hide();
-  }
+  },[])
 
-  render(){
-    return(
-      <Container>
-        {/* <Weather/> */}
-        <FoodImageList tagTitle="가을" foodList={this.state}/>
-      </Container>
-    )
-  }
+  
+  return(
+    <Container>
+            {weatherInfo.isLoaded ?
+              <View>
+                <WeatherLabel>인기 음식 메뉴</WeatherLabel>
+                <WeatherItemContainer>
+                  <WeatherLabel>현재 날씨 : {weatherInfo.weather}</WeatherLabel>
+                  <Image
+                    source={{uri: `http://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png`}}
+                    style={{width: 24, height: 24, marginLeft: 10}}
+                  />
+                </WeatherItemContainer>
+              </View> : 
+              <LoadingView>
+                  <Loading size="large" color="#1976D2" />
+                  <LoadingLabel>Loading...</LoadingLabel>
+              </LoadingView>
+            }
+    </Container>
+  )
 }
 
-export default HomeScreen
+export default Home

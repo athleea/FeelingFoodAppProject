@@ -1,10 +1,10 @@
 import React from 'react'
 import {Text} from 'react-native'
 
-const Map = () => {
+const Recommend = () => {
   return(
-    <Text>Map</Text>
+    <Text>Recommend</Text>
   )
 }
 
-export default Map
+export default Recommend

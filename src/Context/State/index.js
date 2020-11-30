@@ -1,48 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import React, {createContext, useEffect, useState} from 'react';
+import {Alert} from 'react-native'
 import Geolocation from 'react-native-geolocation-service';
 import {PermissionsAndroid} from 'react-native';
-import Styled from 'styled-components/native'
-
-const Container = Styled.View`
-    flexDirection: row;
-`;
-const WeatherItemContainer = Styled.View`
-    flex: 1;
-    margin: 10px;
-    justify-content: flex-start;
-    align-items: flex-start;
-`;
-
-const WeatherLabel = Styled.Text`
-    font-size: 20px;
-    font-weight: bold;
-`;
-const LoadingView = Styled.View`
-    flex: 1;
-    justify-content: flex-start;
-    align-items: flex-start;
-`;
-
-const Loading = Styled.ActivityIndicator`
-    margin-bottom: 16px;
-`;
-
-const LoadingLabel = Styled.Text`
-    font-size: 16px;
-`;
 
 const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
 
+const StateContext = createContext();
+const StateContextProvider = ({children}) => {
 
-
-const Weather = (props) => {
-
+    const setUser = () =>{
+        setFirstUser("false");
+    }
     const [weatherInfo, setWeatherInfo] = useState({
         granted: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         isLoaded: false,
-        weatherId: undefined,
-        weather: ""
+        icon: "04n",
+        weather: "흐림",
+        latitude: undefined,
+        longitude: undefined,
     });
 
     const requestLocationPermission = async() => {
@@ -73,18 +48,23 @@ const Weather = (props) => {
         }
     };
     
-    const getCurrentWeather = async() => {
+    const setCurrentWeather = async() => {
         await requestLocationPermission();
         Geolocation.getCurrentPosition(
             position => {
-                const { latitude, longitude } = position.coords;
+                console.log(position);
+                const {latitude, longitude} = position.coords;
+                setWeatherInfo({
+                    latitude: latitude,
+                    longitude: longitude,
+                })
                 fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`)
                 .then(response => response.json())
                 .then(json => {
                     setWeatherInfo({
                         isLoaded: true,
-                        weatherId: json.weather[0].id,
-                        weather: setWeatherText(json.weather[0].id)
+                        icon: json.weather[0].icon,
+                        weather: getWeatherText(json.weather[0].icon)
                     });
                 })
                 .catch(error => {
@@ -103,52 +83,72 @@ const Weather = (props) => {
             }
         );
     };
-    
-    const setWeatherText = (id) => {
-        
-        switch(Math.floor(id / 100)) {
-            case 2:
-            case 3:
-            case 5:
-            case 9:
-                return '비';
-            case 6:
-                return '눈';
-            case 7:
-                return '흐림'
-            case 8:
-                return '맑음'
-            default:
-                return undefined;
-        }
-    };
     const showError = (message) => {
         setTimeout( () => {
             Alert.alert(message);
         }, 500);
     };
-    
-    
+    const getWeatherText = (icon) => {
 
-    useEffect( () => {
-        getCurrentWeather();
-    }, []);
+        switch(icon) {
+            case "01d":
+            case "01n": return "맑음"
+            case "50d":
+            case "50n":
+            case "02d":
+            case "02n": 
+            case "03d":
+            case "03n": return "구름많음"
+            case "04d":
+            case "04n": return "흐림"
+            case "09d":
+            case "09n": return "소나기"
+            case "10d":
+            case "10n": return "비"
+            case "11d":
+            case "11n": return "천둥번개"
+            case "13d":
+            case "13n": return "눈"
+            default:
+                return "";
+        }
+    };
+    const getSeason = () => {
+        let month = new Date().getMonth() + 1;
+        switch (month) {
+            case 12:
+            case 1:
+            case 2: return "겨울"
+            case 3:
+            case 4:
+            case 5: return "봄"
+            case 6:
+            case 7:
+            case 8: return "여름"
+            case 9:
+            case 10:
+            case 11: return "가을"
 
+            default:
+                return "알 수 없음"
+        }
+    };
+
+    useEffect( ()=> {
+        setCurrentWeather();
+    },[])
 
     return(
-        <Container>
-            {weatherInfo.isLoaded?
-            <WeatherItemContainer>
-                <WeatherLabel>인기 음식 메뉴 #{weatherInfo.weather}</WeatherLabel> 
-            </WeatherItemContainer> : 
-            <LoadingView>
-                <Loading size="large" color="#1976D2" />
-                <LoadingLabel>Loading...</LoadingLabel>
-            </LoadingView>
-            }
-        </Container>
+        <StateContext.Provider
+            value={{
+                weatherInfo,
+                getSeason,
+                requestLocationPermission
+            }}
+        >
+            {children}
+        </StateContext.Provider>
     )
 }
 
-export default Weather
-
+export {StateContextProvider, StateContext};
