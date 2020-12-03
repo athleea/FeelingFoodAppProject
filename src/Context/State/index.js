@@ -3,23 +3,20 @@ import {Alert} from 'react-native'
 import Geolocation from 'react-native-geolocation-service';
 import {PermissionsAndroid} from 'react-native';
 
-const API_KEY = ""
-
 const StateContext = createContext();
 const StateContextProvider = ({children}) => {
 
-    const [weatherInfo, setWeatherInfo] = useState({
+    const [userInfo, setUserInfo] = useState({
         granted: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        isLoaded: false,
-        icon: "04n",
-        weather: "흐림",
-        latitude: undefined,
-        longitude: undefined,
+        isLoaded: true,
+        icon: "03n",
+        weather: "맑음",
+        season : "봄",
     });
 
     const requestLocationPermission = async() => {
         try{
-            weatherInfo.granted = await PermissionsAndroid.request(
+            userInfo.granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                 {
                     title: "위치 서비스 활성화",
@@ -31,40 +28,35 @@ const StateContextProvider = ({children}) => {
                     buttonPositive: "설정"
                 }
             );
-            if (weatherInfo.granted === PermissionsAndroid.RESULTS.GRANTED) {
-                setWeatherInfo({
-                    isLoaded: true
+            if (userInfo.granted === PermissionsAndroid.RESULTS.GRANTED) {
+                setUserInfo({
+                    isLoaded: false
                 });
             } else {
-                setWeatherInfo({
+                setUserInfo({
                     isLoaded: false
                 });
             }
         } catch (err) {
             console.warn(err);
         }
-    };
-    
+    }; 
     const setCurrentWeather = async() => {
         await requestLocationPermission();
         Geolocation.getCurrentPosition(
             position => {
                 const {latitude, longitude} = position.coords;
-                setWeatherInfo({
-                    latitude: latitude,
-                    longitude: longitude,
-                })
                 fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`)
                 .then(response => response.json())
                 .then(json => {
-                    setWeatherInfo({
+                    setUserInfo({
                         isLoaded: true,
                         icon: json.weather[0].icon,
                         weather: getWeatherText(json.weather[0].icon)
                     });
                 })
                 .catch(error => {
-                    setWeatherInfo({
+                    setUserInfo({
                         isLoaded: false
                     });
                     console.log(error);
@@ -72,7 +64,7 @@ const StateContextProvider = ({children}) => {
                 });
             },
             error => {
-                setWeatherInfo({
+                setUserInfo({
                     isLoaded: false
                 });
                 showError('위치 정보를 가져오는데에 실패');
@@ -129,17 +121,27 @@ const StateContextProvider = ({children}) => {
                 return "알 수 없음"
         }
     };
+    const getWeather = () => {
+        return userInfo.weather
+    }
+    const getWeatherIcon = () => {
+        return userInfo.icon
+    }
+    const getIsLoaded = () =>{
+        return userInfo.isLoaded
+    }
 
     useEffect( ()=> {
-        //setCurrentWeather();
+        // setCurrentWeather();
+        // setUserInfo({
+        //     season: getSeason()
+        // })
     },[])
 
     return(
         <StateContext.Provider
             value={{
-                weatherInfo,
-                getSeason,
-                requestLocationPermission
+                userInfo
             }}
         >
             {children}

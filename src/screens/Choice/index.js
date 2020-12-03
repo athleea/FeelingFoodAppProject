@@ -93,9 +93,9 @@ const Choice  = () => {
         });
         setData(array);
     }
-    const saveData = async(id) => {
+    const saveData = async(name) => {
         setCount(count+1);
-        const reference = database().ref(`/Tag/${tagType}/${tag}/${id}`);
+        const reference = database().ref(`/Tag/${tagType}/${tag}/${name}`);
         return await reference.transaction(currentLikes => {
             if (currentLikes === null) {
                 return 1;
@@ -114,7 +114,6 @@ const Choice  = () => {
         SplashScreen.hide();
         initTag();
         initFood();
-
     }, []);
 
     const ListHeader = () => {
@@ -156,7 +155,7 @@ const Choice  = () => {
                         backgroundColor: 'gray',
                         color: 'white'
                     }}
-                >skip</Text>
+                >pass</Text>
             </TouchableOpacity>
         );
     }
@@ -176,11 +175,10 @@ const Choice  = () => {
                 renderItem={({item, index}) => (
                     <FoodImageContainer
                         onPress={() => {
-                            saveData(item.id).then(()=>{
+                            saveData(item.name).then(()=>{
                                 initTag();
                                 initFood();
                             })
-                            
                         }}>
                         <FoodImage
                             source={{uri : item.url}}

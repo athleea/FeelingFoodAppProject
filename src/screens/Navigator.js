@@ -30,7 +30,7 @@ const MainNavigator = () => {
         <NavigationContainer>
             <BottomTab.Navigator>
                 <BottomTab.Screen
-                    name="StackHome"
+                    name="Home"
                     component={StackHome}
                     options={{
                         tabBarIcon: ({color, focused}) => (
