@@ -74,7 +74,7 @@ const Loading = Styled.ActivityIndicator`
 const LoadingLabel = Styled.Text`
   font-size: 16px;
 `;
-const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
+const API_KEY = ""
 
 const Home = ({navigation}) => {
   
