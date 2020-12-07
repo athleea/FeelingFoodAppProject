@@ -66,15 +66,15 @@ const Choice  = () => {
         return num
     }
     const initTag = () => {
-        const tagCatagori = ["Season","Emotion","Weather"]
+        const tagCatagori = ["Weather","Emotion","Anniversary"]
         let type = getRandomCatagori(tagCatagori)
         setTagType(type);
         try{
             database().ref(`/Tag/${type}`).once('value')
             .then(snapshot => {
-                let t = snapshot.val()
-                let c = getRandomCatagori(Object.keys(t));
-                setTag(c)
+                let tags = Object.keys(snapshot.val());
+                let randomTag = getRandomCatagori(tags);
+                setTag(randomTag);
             });
         }catch(e){
             console.log(e)
@@ -93,9 +93,8 @@ const Choice  = () => {
         });
         setData(array);
     }
-    const saveData = async(name) => {
-        setCount(count+1);
-        const reference = database().ref(`/Tag/${tagType}/${tag}/${name}`);
+    const saveData = async(id) => {
+        const reference = database().ref(`/Tag/${tagType}/${tag}/${id}`);
         return await reference.transaction(currentLikes => {
             if (currentLikes === null) {
                 return 1;
@@ -108,7 +107,6 @@ const Choice  = () => {
     const [data, setData] = useState([]);
     const [tag, setTag] = useState("");
     const [tagType, setTagType] = useState("");
-    const [count, setCount] = useState(0)
 
     useEffect( ()=> {
         SplashScreen.hide();
@@ -166,7 +164,6 @@ const Choice  = () => {
             <FoodContainer
                 ListHeaderComponent = {ListHeader}
                 ListFooterComponent = {ListFooter}
-                extraData = {count}
                 numColumns = {2}
                 data={data}
                 keyExtractor={(item, index) => {
@@ -175,7 +172,7 @@ const Choice  = () => {
                 renderItem={({item, index}) => (
                     <FoodImageContainer
                         onPress={() => {
-                            saveData(item.name).then(()=>{
+                            saveData(item.id).then(()=>{
                                 initTag();
                                 initFood();
                             })

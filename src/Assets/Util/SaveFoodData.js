@@ -1,11 +1,12 @@
 import database from '@react-native-firebase/database'
 import storage from '@react-native-firebase/storage';
+import { exp } from 'react-native-reanimated';
 
 const catagori = ["KFood","Stew","CFood","JFood","WFood","Snack","Noodle","Etc"]
 const foodName = {
                 0 : ["갈비구이","게장","곱창","김치볶음밥","껍데기","닭갈비","닭발","떡갈비","보쌈","불고기",
                       "비빔밥","삼겹살","생선구이","수제비","오징어볶음","육회","전","제육볶음","족발","죽",
-                      "찜닭"],  
+                      "찜닭","조개구이"],
                 1 : ["김치찌개","설렁탕","떡국","갈비찜","순두부찌개","닭도리탕","매운탕","삼계탕","감자탕","뼈해장국",
                       "육개장","국밥","추어탕","갈비탕","백숙","부대찌개","된장찌개","청국장","아귀찜",],
                 2 : ["깐쇼새우","깐풍기","마라탕","마파두부","볶음밥","양꼬치","양장피","유린기","짜장면","짬뽕",
@@ -39,10 +40,10 @@ const saveData = async() => {
   console.log("End...")
 }
 
-const tagCatagori = ["Emotion","Season","Weather"]
+const tagCatagori = ["Emotion","Anniversary","Weather"]
 const tag = [ ["기쁠때","슬플때","화날때","지루할때","놀랐을때","무서울때","짜증날때","쓸쓸할때","어색할때","답답할때","고요할때","뿌듯할때","초조할때","우울할때", "행복할때"],
-  ["봄","여름","가을","겨울"],
-  ["맑음","구름","흐림","소나기","비","천둥번개","눈"]
+  ["봄","여름","가을","겨울","크리스마스","1주년","생일","100일 기념","입학식","졸업식","퇴사","입사"],
+  ["맑음","구름많음","흐림","소나기","비","천둥번개","눈"]
 ]
 
 const saveTagData = () => {
@@ -50,21 +51,23 @@ const saveTagData = () => {
     for(let j=0;j<tag[i].length;j++){
       database().ref(`/Tag/${tagCatagori[i]}/${tag[i][j]}`).set({
           0 : 1,
-          1 : 1,
-          2 : 1,
-          3 : 1,
-          4 : 1,
-          5 : 1,
-          6 : 1,
-          7 : 1,
-          8 : 1,
-          9 : 1,
-          10 : 1,
           11 : 1,
-          12 : 1,
-          13 : 1,
+          22 : 1,
+          33 : 1,
+          44 : 1,
+          55 : 1,
+          66 : 1,
+          77 : 1,
+          88 : 1,
+          19 : 1,
+          20 : 1,
+          31 : 1,
+          42 : 1,
+          53 : 1,
       }).then( ()=> console.log("Data set"));
     }
   }
   console.log("End..");
 }
+
+export default {saveData, saveTagData}

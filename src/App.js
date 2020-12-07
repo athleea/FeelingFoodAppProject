@@ -1,29 +1,12 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
 import Navigator from '~/screens/Navigator'
 
-import {StateContextProvider} from '~/Context/State';
 
-import {StatusBar} from 'react-native';
-
-
-const onPress = () => {
-  console.log("HelloWorld");
-}
-class App extends React.Component{
+const App = () => {
   
-
-  render(){
-    return(
-      <StateContextProvider>
-        <StatusBar barStyle="default" />
-        <Navigator />
-      </StateContextProvider>
-      
-    )
-  }
-
-  
+  return(
+    <Navigator />
+  )
 }
 
 

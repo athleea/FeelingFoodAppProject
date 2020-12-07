@@ -12,30 +12,30 @@ import {PermissionsAndroid} from 'react-native';
 
 const Container = Styled.ScrollView`
   flex: 1;
-  backgroundColor : lightyellow;
+  backgroundColor : black;
 `;
-
 const MainFoodContainer = Styled.View`
   margin: 20px 20px;
   justify-content: center;
   align-items: center;
 `
 const MainFoodImage = Styled.Image`
-  
 `
 const MainFoodView = Styled.View`
   flexDirection: row;
   justify-content: center;
 `
 const MainFoodText = Styled.Text`
-  flex: 3;
+  color: white;
+  flex: 5;
   text-align: center;
   marginTop : 15px;
   marginLeft: 10px;
-  font-size: 20px
+  font-size: 18px;
+  font-weight: bold;
 `
 const RecommendButtonConatiner = Styled.TouchableOpacity`
-  flex: 1;
+  flex: 2;
   justify-content: center;
   align-items: center;
   marginTop : 15px;
@@ -47,7 +47,6 @@ const RecommendButton = Styled.Text`
 `
 const CatagoriContainer = Styled.View`
   flex:1;
-  backgroundColor: black;
   justify-content: flex-start;
   align-items: flex-start;
   
@@ -72,9 +71,10 @@ const Loading = Styled.ActivityIndicator`
 `;
 
 const LoadingLabel = Styled.Text`
+  color: white;
   font-size: 16px;
 `;
-const API_KEY = ""
+const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
 
 const Home = ({navigation}) => {
   
@@ -119,24 +119,27 @@ const Home = ({navigation}) => {
     Geolocation.getCurrentPosition(
       position => {
         const {latitude, longitude} = position.coords;
+        //https://api.openweathermap.org/data/2.5/weather?lat=37.507390607185336&lon=126.87669615985372&appid=6b3df92331ad3dd3d5e970ffe1382aa5&units=metric
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`)
         .then(response => response.json())
         .then(json => {
           setData({
                 isLoaded: true,
                 icon: json.weather[0].icon,
-                weather: getWeatherText(json.weather[0].icon)
+                weather: getWeatherText(json.weather[0].icon),
+                season: getSeason()
             });
         })
         .catch(error => {
           setData({
                 isLoaded: false
-            });
-            console.log(error);
-            showError('날씨 정보를 가져오는데에 실패')
+          });
+          console.log(error);
+          showError('날씨 정보를 가져오는데에 실패');
         });
       },
       error => {
+        console.log(error)
         setData({
           isLoaded: false
         });
@@ -176,9 +179,10 @@ const Home = ({navigation}) => {
   };
   const getSeason = () => {
       let month = new Date().getMonth() + 1;
+      let day = new Date().getDate();     
       switch (month) {
-          case 12:
-          case 1:
+          case 12: if(day===25)return "크리스마스"
+          case 1: if(day===1)return "새해"
           case 2: return "겨울"
           case 3:
           case 4:
@@ -191,26 +195,19 @@ const Home = ({navigation}) => {
           case 11: return "가을"
 
           default:
-              return "알 수 없음"
+            return "ERROR"
       }
   };
 
   useEffect(()=>{
-    setCurrentWeather();
-    setData({season: getSeason()});
-    initRandomMainFood();
     SplashScreen.hide();
+    setCurrentWeather();
+    initRandomMainFood();
   },[]);
 
   
   return(
     <Container>
-      <Button 
-        title={"press"}
-        onPress={()=>{
-          console.log(userInfo)
-        }}
-        />
        <MainFoodContainer>
          <MainFoodImage
             style={{
@@ -221,7 +218,7 @@ const Home = ({navigation}) => {
             }}
           source={{uri: mainFood.url}}/>
         <MainFoodView>
-          <MainFoodText>오늘의 추천 메뉴 : {mainFood.name}</MainFoodText>
+          <MainFoodText>추천 메뉴 : {mainFood.name}</MainFoodText>
           <RecommendButtonConatiner
             onPress={()=>{navigation.navigate('Recommend')}}
           >
@@ -229,16 +226,17 @@ const Home = ({navigation}) => {
           </RecommendButtonConatiner>
         </MainFoodView>
       </MainFoodContainer>
-      {data.isLoaded ? 
+      
+      {data.isLoaded ?
         <CatagoriContainer>
           <View style={{flexDirection: 'row'}}>
-            <WeatherLabel>현재 날씨 : {data.weather}</WeatherLabel>
+            <WeatherLabel>#현재 날씨 : {data.weather}</WeatherLabel>
               <Image
                   source={{uri: `http://openweathermap.org/img/wn/${data.icon}@2x.png`}}
-                  style={{width: 24, height: 24, marginLeft: 10}}
+                  style={{width: 40, height: 40, marginLeft: 10}}
                 />
           </View>
-          <FoodImageList catagori="Weather" tag={data.weather}/>
+          <FoodImageList catagori="Weather" tag={data.weather} isLoaded={data.isLoaded}/>
         </CatagoriContainer>
         :
         <LoadingView>
@@ -246,9 +244,10 @@ const Home = ({navigation}) => {
             <LoadingLabel>날씨 정보 얻는 중...</LoadingLabel>
         </LoadingView>
       }
-      
-
-      
+      <CatagoriContainer>
+        <WeatherLabel>#{data.season}</WeatherLabel>
+        <FoodImageList catagori="Anniversary" tag={data.season}  isLoaded={data.isLoaded}/>
+      </CatagoriContainer>
     </Container>
   )
 }
