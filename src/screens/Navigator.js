@@ -1,10 +1,11 @@
-import React from 'react';
-import {Image, StatusBar} from 'react-native';
+import React,{useContext} from 'react';
+import {Image,Text} from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import {UserContext} from '~/Context/User';
 import Home from './Home'
 import Catagori from './Catagori'
 import Map from './Map'
@@ -100,7 +101,9 @@ const MainNavigator = () => {
 
 export default () => {
 
+    const {isLoaded} = useContext(UserContext);
     return(
-        <MainNavigator />
+        isLoaded ? <MainNavigator /> : <Text>Loading..</Text>
+        
     )
 }

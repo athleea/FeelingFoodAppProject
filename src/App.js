@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Navigator from '~/screens/Navigator'
 
+import {UserContextProvider} from '~/Context/User';
 
 const App = () => {
   
   return(
-    <Navigator />
+    <UserContextProvider>
+      <Navigator />
+    </UserContextProvider>
   )
 }
 
