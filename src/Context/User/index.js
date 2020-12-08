@@ -10,7 +10,7 @@ const defaultContext = {
     longitude: 127.269311
 };
 
-const API_KEY = "6b3df92331ad3dd3d5e970ffe1382aa5"
+const API_KEY = ""
 
 const UserContext = createContext(defaultContext);
 

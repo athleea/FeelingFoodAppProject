@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {View} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 
-const API_KEY = 'd7bfcb1ceec975e2c1a8f6ce48e1abde'
+const API_KEY = ''
 
 const Map = () => {
 
