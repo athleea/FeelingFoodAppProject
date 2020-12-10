@@ -12,9 +12,9 @@ const Catagori = () => {
     <TopTab.Navigator
       labeled="true"
       tabBarOptions={{
-        activeTintColor: '#ffffff',
+        activeTintColor: '#111111',
         labelStyle: { fontSize : 15 },
-        style: { backgroundColor: 'black' },
+        style: { backgroundColor: 'skyblue' },
       }}
     >
       <TopTab.Screen

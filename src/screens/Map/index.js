@@ -1,54 +1,86 @@
-import React, {useEffect} from 'react';
-import {View} from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import React, {useEffect,useContext, useState, useCallback} from 'react';
+import {Button, View} from 'react-native';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { useFocusEffect } from '@react-navigation/native';
+import { UserContext } from '~/Context/User';
 
 const API_KEY = ''
 
-const Map = () => {
+const URL = 'https://dapi.kakao.com/v2/local/search/keyword.json?page=45&size=15&sort=accuracy&category_group_code=FD6'
 
-  // const [data, setData] = useState({
-  //   foodName: route.params.name,
-  //   longitude: undefined,
-  //   latitude: undefined,
-  // })
-  
-  const initData = () => {
+const Map = ({route}) => {
+
+  const {location} = useContext(UserContext)
+
+  const [data, setData] = useState({
+    latitude: location.latitude,
+    longitude: location.longitude
+  })
+  const [marker, setMarker] = useState([])
+  const [query, setQuery] = useState('')
+  const [isFocus, setIsFocus] = useState(false)
+
+  const initMarker = () => {
+    setQuery(route.params.name)
     fetch(
-      `https://dapi.kakao.com/v2/local/search/keyword.json?
-      page=1&size=15&sort=accuracy&query=유한대&category_group_code=FD6&x=126.87669615985372&y=37.507390607185336&radius=1000`, {
-      method: 'GET',
-      headers: {
-        Authorization: `KakaoAK ${API_KEY}` 
-      },
-    }).then(response => response.json())
+      //x = 126.87669615985372 y = 37.507390607185336
+      `${URL}&x=${data.longitude}&y=${data.latitude}&radius=1000&query=${query}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `KakaoAK ${API_KEY}` 
+        }
+      })
+      .then(response => response.json())
       .then(json => {
         console.log(json)
+        setMarker(json.documents)
+        console.log(marker);
+        setIsFocus(true)
       })
-      .catch(error => {
-        console.log(error);
-      });
+    .catch(error => {
+      console.log(error);
+    });
   }
 
-
   useEffect(()=>{
-    initData();
-  })
+    console.log('query : ' + query)
+    initMarker();
+  },[isFocus])
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log(route.params.name)
+      setIsFocus(true)
+      return ()=> setIsFocus(false)
+    }, [])
+  )
 
   return(
-    <View style={{flex:1}}>
       <MapView 
+        provider={PROVIDER_GOOGLE}
         style={{flex:1}}
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: data.latitude,
+          longitude: data.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-      />
-    </View>
+      >
+      {marker? marker.map((val)=>{
+          let lat = parseFloat(val.y)
+          let lon = parseFloat(val.x)
+          return(
+            <Marker 
+              key={val.id}
+              coordinate={{latitude: lat, longitude: lon}}
+              title={val.place_name}
+              description="this is a marker example"/>
+          )
+        }) : <></>
+      }
+      </MapView>
   )
 }
-
 
 
 export default Map

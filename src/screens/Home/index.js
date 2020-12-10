@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Dimensions, Image, View, Button, Alert } from 'react-native'
+import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
+import { Dimensions, Image, View, Button, RefreshControl} from 'react-native'
 
 import FoodImageList from './FoodImageList'
 import LoadingView from '~/Components/Loading'
-import { UserContext } from '../../Context/User';
+import FoodImage from '~/Components/FoodImage'
+import { UserContext } from '~/Context/User';
 
 import SplashScreen from 'react-native-splash-screen';
 import database from '@react-native-firebase/database';
@@ -12,116 +13,115 @@ import Styled from 'styled-components/native'
 
 const Container = Styled.ScrollView`
   flex: 1;
-  backgroundColor : black;
+  backgroundColor : skyblue;
 `;
-const MainFoodContainer = Styled.View`
-  margin: 20px 20px;
-  justify-content: center;
-  align-items: center;
-`
-const MainFoodImage = Styled.Image`
-`
-const MainFoodView = Styled.View`
-  flexDirection: row;
-  justify-content: center;
-`
-const MainFoodText = Styled.Text`
-  color: white;
-  flex: 5;
-  text-align: center;
-  marginTop : 15px;
-  marginLeft: 10px;
-  font-size: 18px;
-  font-weight: bold;
-`
-const RecommendButtonConatiner = Styled.TouchableOpacity`
-  flex: 2;
-  justify-content: center;
-  align-items: center;
-  marginTop : 15px;
-  marginRight: 20px;
-  backgroundColor: skyblue;  
-`
-const RecommendButton = Styled.Text`
-
-`
+const SettingButton = Styled.TouchableOpacity`
+    padding: 8px;
+`;
+const Icon = Styled.Image`
+`;
 const CatagoriContainer = Styled.View`
   flex:1;
-  justify-content: flex-start;
-  align-items: flex-start;
-  
 `;
-
-const WeatherLabel = Styled.Text`
-  padding: 5px;
-  color: white;
+const TagLabel = Styled.TouchableOpacity`
+  flexDirection: row;
+  align-items: center;
+  marginLeft: 10px;
+`;
+const TagText = Styled.Text`
   font-size: 20px;
   font-weight: bold;
-`;
+`
 
 
 
 const Home = ({ navigation }) => {
-  const { location, showError,isLoaded} = useContext(UserContext)
-  
-  const [mainFood, setMainFood] = useState([]);
-  const [data, setData] = useState({})
-
+  const { location, isLoaded} = useContext(UserContext)
   const {weather, icon, season} = location
 
+  const [randomFood,setRandomFood] = useState({})
+  const [refreshing, setRefreshing] = useState(false);
+
   const initRandomMainFood = () => {
-    let index = Math.floor(Math.random() * 88)
-    database().ref(`/Food/${index}`).once('value', snapshot => {
-      setMainFood(snapshot.val());
-    });
+      database().ref(`/Food`).once('value', snapshot => {
+        let length = Object.keys(snapshot.val()).length
+        let index = Math.floor(Math.random() * length)
+        setRandomFood(snapshot.val()[index]);
+        console.log(randomFood)
+      });
   }
-  
+  useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerRight: () => (
+          <SettingButton
+              onPress={ () => {
+                navigation.navigate('Recommend')
+              }}>
+              <Icon source={require('~/Assets/Images/Tabs/ic_setting.png')} />
+          </SettingButton>
+      )
+    })
+  },[])
 
-
-  useEffect(() => {
+  useEffect(()=>{
     initRandomMainFood();
     SplashScreen.hide();
-    
+    console.log(location)
+  },[])
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    initRandomMainFood();
+    wait(1000).then(() => setRefreshing(false));
   }, []);
 
-
   return (
-    <Container>
-      <MainFoodContainer>
-        <MainFoodImage
-          style={{
-            borderRadius: 10,
-            resizeMode: 'contain',
-            width: (Dimensions.get('window').width) - 10,
-            height: 200
-          }}
-          source={{ uri: mainFood.url }} />
-        <MainFoodView>
-          <MainFoodText>추천 메뉴 : {mainFood.name}</MainFoodText>
-          <RecommendButtonConatiner
-            onPress={() => { navigation.navigate('Recommend') }}
-          >
-            <RecommendButton>다른 메뉴 추천</RecommendButton>
-          </RecommendButtonConatiner>
-        </MainFoodView>
-      </MainFoodContainer>
-
-      {isLoaded ?
-          <CatagoriContainer>
-            <View style={{ flexDirection: 'row' }}>
-              <WeatherLabel>#현재 날씨 : {weather}</WeatherLabel>
-              <Image
-                source={{ uri: `http://openweathermap.org/img/wn/${icon}@2x.png` }}
-                style={{ width: 40, height: 40, marginLeft: 10 }}
-              />
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
+      <FoodImage
+        width={(Dimensions.get('window').width) - 10}
+        height={250}
+        size={'cover'}
+        food={randomFood} 
+        onPress={()=>{navigation.navigate('Map',{name: randomFood.name})}}
+        />
+      <CatagoriContainer>
+          {isLoaded ?
+            <View>
+                <TagLabel>
+                  <TagText>#현재 날씨 : {weather}</TagText>
+                  <Image
+                      source={{ uri: `http://openweathermap.org/img/wn/${icon}@2x.png` }}
+                      style={{ width: 40, height: 40, marginLeft: 5 }}
+                    />
+                </TagLabel>
+                <FoodImageList 
+                  catagori="Weather" 
+                  tag={weather}
+                  onPress={(name) => {
+                    navigation.navigate('Map', name);
+                  }} />
             </View>
-            <FoodImageList catagori="Weather" tag={weather}/>
-          </CatagoriContainer>
-        :
-          <LoadingView />
-        }
-        <WeatherLabel>#{season}</WeatherLabel>
-        <FoodImageList catagori="Anniversary" tag={season} />
+            :
+              <LoadingView />
+            }
+          <TagLabel><TagText>#{season}</TagText></TagLabel>
+          <FoodImageList 
+            catagori="Anniversary" 
+            tag={season} 
+            onPress={(food) => {
+              navigation.navigate('Map', {name: food.name});
+            }} />
+      </CatagoriContainer>
+
     </Container>
   )
 }

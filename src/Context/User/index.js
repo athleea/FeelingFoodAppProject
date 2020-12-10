@@ -6,11 +6,11 @@ import Geolocation from 'react-native-geolocation-service';
 import {PermissionsAndroid} from 'react-native';
 
 const defaultContext = {
-    latitude: 37.413294,
-    longitude: 127.269311
+    latitude: 37.507390607185336,
+    longitude: 126.87669615985372
 };
 
-const API_KEY = ""
+const API_KEY = ''
 
 const UserContext = createContext(defaultContext);
 
@@ -19,35 +19,44 @@ const UserContextProvider = ({children}) => {
     const [location, setLocation] = useState({});
     const [isLoaded, setIsLoaded] = useState(true)
 
-    const requestLocationPermission = async() => {
+    const requestPermission = async() => {
         try{
-            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                setCurrentLocation()
-            } else {
-                setIsLoaded(false)
+            if (Platform.OS === "ios"){
+                return await Geolocation.requestAuthorization("always"); 
             }
-        } catch (err) {
-            console.warn(err);
-        }
+            if (Platform.OS === "android") { 
+                return await PermissionsAndroid.request( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, ); 
+            }
+        } catch (e) {
+             console.log(e); 
+        } 
     };
     const setCurrentLocation = () => {
-        Geolocation.getCurrentPosition(
-            position => {
-                const {latitude, longitude} = position.coords;
-                setCurrentWeather(latitude, longitude);
-            },
-            error => {
-                console.log(error)
+        requestPermission().then(result=>{
+            if(result==="granted"){
+                Geolocation.getCurrentPosition(
+                    position => {
+                        console.log(position)
+                        const {latitude, longitude} = position.coords;
+                        setCurrentWeather(latitude, longitude);
+                    },
+                    error => {
+                        console.log(error)
+                        setIsLoaded(false)
+                        showError('위치 정보를 가져오는데에 실패 했습니다');
+                    }
+                );
+            }else{
                 setIsLoaded(false)
-                showError('위치 정보를 가져오는데에 실패 했습니다');
+                showError('위치 정보를 가져오는데에 실패');
             }
-        );
+        })
     };
     const setCurrentWeather = (lat, lon) => {
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`)
         .then(response => response.json())
         .then(json => {
+            console.log(json)
             setLocation({
                 latitude: lat,
                 longitude: lon,
@@ -56,6 +65,7 @@ const UserContextProvider = ({children}) => {
                 season: getSeason(),
             });
             setIsLoaded(true)
+            
         })
         .catch(error => {
             showError('날씨 정보를 가져오는데에 실패');
@@ -124,7 +134,7 @@ const UserContextProvider = ({children}) => {
     };
 
     useEffect( ()=> {
-        requestLocationPermission();
+        setCurrentLocation();
     },[]);
 
     return (
@@ -132,9 +142,6 @@ const UserContextProvider = ({children}) => {
             value={{
                 location,
                 isLoaded,
-                showError,
-                setCurrentLocation,
-                requestLocationPermission,
             }}>
                 {children}
         </UserContext.Provider>

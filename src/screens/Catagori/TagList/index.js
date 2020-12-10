@@ -5,17 +5,17 @@ import database from '@react-native-firebase/database'
 
 const Container = Styled.ScrollView`
   flex: 1;
-  backgroundColor: black;
+  backgroundColor: skyblue;
 `
 const Item = Styled.TouchableOpacity`
-  margin: 5px 0px;
+  margin: 2px;
   border: 1px;
-  border-color: gray;
-  padding: 10px;
+  border-color: white;
+  padding: 5px;
 `
 
 const TagText = Styled.Text`
-  color: white;
+  marginLeft: 10px;
   font-size: 20px;
 `
 

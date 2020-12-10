@@ -12,6 +12,7 @@ const Container = Styled.SafeAreaView`
     flex: 1;
     align-items: center;
     justify-content: center;
+    backgroundColor: beige;
 `
 const HeaderText = Styled.Text`
     flex: 0.5;

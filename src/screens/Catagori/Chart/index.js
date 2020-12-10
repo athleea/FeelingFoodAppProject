@@ -3,40 +3,37 @@ import Styled from 'styled-components/native'
 import {Text, FlatList, View, Image} from 'react-native'
 
 import database from '@react-native-firebase/database'
-import { Button } from 'react-native'
 
 const Container = Styled.View`
-  backgroundColor: black
+  backgroundColor: skyblue
 `
 const ItemContainer = Styled.View`
-  margin: 5px;
+  margin: 2px;
   flexDirection: row;
   align-items: center;
 `
 const LankText = Styled.Text`
-  color: white
-  flex: 0.5;
-  
+  text-align: center;
+  flex:1;
   font-size: 20px;
   font-weight: bold;
+`
+const FoodLabel = Styled.View`
+  flex:4;
 `
 const FootImage = Styled.Image`
-  flex: 1.5
-  border-radius: 10px;
+  flex:4;
+  border-radius: 15px;
 `
 const FoodName = Styled.Text`
-  flex: 3
   text-align: center;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bold;
-  color: white;
 `
 const LikeCount = Styled.Text`
-  flex: 1
   text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
+  font-size: 17px;
+  
 `
 const Chart = ({route}) => {
   
@@ -78,11 +75,14 @@ const Chart = ({route}) => {
       <ItemContainer>
         <LankText>{index + 1}</LankText>
         <FootImage
+          resizeMode={'cover'}
           style={{width: 150, height: 120}} 
           source={{uri: item.url}}
         />
-        <FoodName>{item.name}</FoodName>
-        <LikeCount>♥ {item.like}</LikeCount>
+        <FoodLabel>
+          <FoodName>{item.name}</FoodName>
+          <LikeCount>♥ {item.like}</LikeCount>
+        </FoodLabel>
       </ItemContainer>
     )
   }

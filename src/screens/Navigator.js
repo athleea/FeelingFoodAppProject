@@ -20,7 +20,22 @@ const Stack = createStackNavigator();
 const StackHome = () => {
     return(
         <Stack.Navigator>
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen 
+                name="Home"
+                component={Home} 
+                options={{
+                    title: '음식추천',
+                    headerTintColor: '#111111',
+                    headerStyle: {
+                        backgroundColor: '#ffffff',
+                        borderBottomWidth: 0
+                    },
+                    headerTitleStyle:{
+                        fontWeight: 'bold',
+                    }
+                }}
+
+                />
             <Stack.Screen name="Recommend" component={Recommend} />
         </Stack.Navigator>
     )
@@ -79,6 +94,9 @@ const MainNavigator = () => {
                             />
                         )
                     }}
+                    initialParams={{ name: '맛집' }}
+                    
+                    
                 />
                 <BottomTab.Screen
                     name="Choice"
