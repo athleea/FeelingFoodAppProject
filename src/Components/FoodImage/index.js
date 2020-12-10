@@ -1,8 +1,8 @@
 import React  from 'react'
-import {Image,Dimensions} from 'react-native'
+import {Image} from 'react-native'
 import Styled from 'styled-components/native'
 
-
+const textColor = "#28292b"
 
 const Container = Styled.View`
     margin: 10px;
@@ -13,11 +13,12 @@ const ImageView = Styled.TouchableOpacity`
 `
 const FoodName = Styled.Text`
     marginTop: 10px;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
+    color: ${textColor};
 `
 
-const FoodImage = ({food, onPress, width, height, size}) => {
+const FoodImage = ({food, onPress, width, height, size, fontsize}) => {
 
     return(
         <Container>
@@ -32,7 +33,7 @@ const FoodImage = ({food, onPress, width, height, size}) => {
                     }}
                     source={{ uri: food.url }}/>
             </ImageView>
-            <FoodName>{food.name}</FoodName>
+            <FoodName style={{fontSize: fontsize}}>{food.name}</FoodName>
         </Container>
     )
 }

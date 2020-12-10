@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import Styled from 'styled-components/native'
-import {Text, FlatList, View, Image} from 'react-native'
+import {FlatList} from 'react-native'
 
 import database from '@react-native-firebase/database'
 
-const Container = Styled.View`
-  backgroundColor: skyblue
+const backgroundcolor = "#eed974"
+const textColor = "#28292b"
+
+
+const Container = Styled.SafeAreaView`
+  backgroundColor: ${backgroundcolor}
 `
-const ItemContainer = Styled.View`
+const ItemContainer = Styled.TouchableOpacity`
   margin: 2px;
   flexDirection: row;
   align-items: center;
@@ -17,6 +21,7 @@ const LankText = Styled.Text`
   flex:1;
   font-size: 20px;
   font-weight: bold;
+  color: ${textColor}
 `
 const FoodLabel = Styled.View`
   flex:4;
@@ -29,13 +34,14 @@ const FoodName = Styled.Text`
   text-align: center;
   font-size: 17px;
   font-weight: bold;
+  color: ${textColor}
 `
 const LikeCount = Styled.Text`
   text-align: center;
   font-size: 17px;
-  
+  color: ${textColor}
 `
-const Chart = ({route}) => {
+const Chart = ({navigation, route}) => {
   
   const [data, setData] = useState({
     tag : route.params.tag, 
@@ -72,7 +78,12 @@ const Chart = ({route}) => {
 
   const renderItem = ({item, index}) => {
     return(
-      <ItemContainer>
+      <ItemContainer
+        onPress={()=>{navigation.navigate('StackMap',{
+          screen : 'Map',
+          params : {name: item.name}
+        })}}
+      >
         <LankText>{index + 1}</LankText>
         <FootImage
           resizeMode={'cover'}

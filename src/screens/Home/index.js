@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
-import { Dimensions, Image, View, Button, RefreshControl} from 'react-native'
+import { Dimensions, Image, View, RefreshControl} from 'react-native'
 
 import FoodImageList from './FoodImageList'
 import LoadingView from '~/Components/Loading'
@@ -9,16 +9,17 @@ import { UserContext } from '~/Context/User';
 import SplashScreen from 'react-native-splash-screen';
 import database from '@react-native-firebase/database';
 import Styled from 'styled-components/native'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
+const backgroundcolor = "#eed974"
+const textColor = "#28292b"
 
 const Container = Styled.ScrollView`
   flex: 1;
-  backgroundColor : skyblue;
+  backgroundColor : ${backgroundcolor};
 `;
 const SettingButton = Styled.TouchableOpacity`
-    padding: 8px;
-`;
-const Icon = Styled.Image`
+  marginRight: 20px;
 `;
 const CatagoriContainer = Styled.View`
   flex:1;
@@ -29,6 +30,7 @@ const TagLabel = Styled.TouchableOpacity`
   marginLeft: 10px;
 `;
 const TagText = Styled.Text`
+  color: ${textColor}
   font-size: 20px;
   font-weight: bold;
 `
@@ -55,9 +57,9 @@ const Home = ({ navigation }) => {
       headerRight: () => (
           <SettingButton
               onPress={ () => {
-                navigation.navigate('Recommend')
+                navigation.navigate('Setting')
               }}>
-              <Icon source={require('~/Assets/Images/Tabs/ic_setting.png')} />
+              <Icon name="cog" size={25} color="#ffffff" />
           </SettingButton>
       )
     })
@@ -89,9 +91,12 @@ const Home = ({ navigation }) => {
       <FoodImage
         width={(Dimensions.get('window').width) - 10}
         height={250}
-        size={'cover'}
+        fontsize={30}
         food={randomFood} 
-        onPress={()=>{navigation.navigate('Map',{name: randomFood.name})}}
+        onPress={()=>{navigation.navigate('StackMap',{
+          screen : 'Map',
+          params : {name: randomFood.name}
+        })}}
         />
       <CatagoriContainer>
           {isLoaded ?
@@ -106,8 +111,11 @@ const Home = ({ navigation }) => {
                 <FoodImageList 
                   catagori="Weather" 
                   tag={weather}
-                  onPress={(name) => {
-                    navigation.navigate('Map', name);
+                  onPress={(food) => {
+                    navigation.navigate('StackMap', {
+                      screen : 'Map',
+                      params : {name: food.name}
+                    });
                   }} />
             </View>
             :
@@ -118,7 +126,10 @@ const Home = ({ navigation }) => {
             catagori="Anniversary" 
             tag={season} 
             onPress={(food) => {
-              navigation.navigate('Map', {name: food.name});
+              navigation.navigate('StackMap', {
+                screen : 'Map',
+                params : {name: food.name}
+              });
             }} />
       </CatagoriContainer>
 

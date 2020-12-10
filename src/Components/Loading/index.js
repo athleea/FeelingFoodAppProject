@@ -1,6 +1,7 @@
 import React from 'react'
 import Styled from 'styled-components/native'
 
+const textColor = "#28292b"
 const Conatiner = Styled.View`
   flexDirection: row;
   margin: 10px;
@@ -14,7 +15,7 @@ const Loading = Styled.ActivityIndicator`
 `;
 
 const LoadingLabel = Styled.Text`
-  color: white;
+  color: ${textColor};
   font-size: 16px;
 `;
 

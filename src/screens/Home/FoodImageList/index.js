@@ -36,7 +36,7 @@ const FoodImageList = ({catagori, tag, onPress}) => {
     return(
       <FoodImage
         width={200}
-        height={100}
+        height={130}
         size={'cover'}
         food={item} 
         onPress={()=>{
@@ -47,8 +47,6 @@ const FoodImageList = ({catagori, tag, onPress}) => {
   }
 
   return(
-     
-      
       <FlatList
         horizontal={true}
         data={data}
@@ -56,8 +54,6 @@ const FoodImageList = ({catagori, tag, onPress}) => {
             return `${item.id}-${index}`;
         }}
         renderItem={renderItem} />
-     
-    
   );
 }
 

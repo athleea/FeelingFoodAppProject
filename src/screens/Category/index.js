@@ -4,6 +4,8 @@ import TagList from './TagList'
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+const backgroundcolor = "#eed974"
+const textColor = "#28292b"
 
 const TopTab = createMaterialTopTabNavigator();
 
@@ -12,9 +14,9 @@ const Catagori = () => {
     <TopTab.Navigator
       labeled="true"
       tabBarOptions={{
-        activeTintColor: '#111111',
+        activeTintColor: '#fff',
         labelStyle: { fontSize : 15 },
-        style: { backgroundColor: 'skyblue' },
+        style: { backgroundColor: textColor },
       }}
     >
       <TopTab.Screen

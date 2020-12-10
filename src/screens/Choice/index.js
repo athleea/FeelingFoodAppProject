@@ -7,15 +7,18 @@ import Styled from 'styled-components/native'
 
 import database from '@react-native-firebase/database';
 
+const backgroundcolor = "#eed974"
+const textColor = "#28292b"
 
 const Container = Styled.SafeAreaView`
     flex: 1;
     align-items: center;
     justify-content: center;
-    backgroundColor: beige;
+    backgroundColor: ${backgroundcolor};
 `
 const HeaderText = Styled.Text`
     flex: 0.5;
+    color: ${textColor}
     fontWeight: bold;
     font-size: 20px;
     marginTop: 10px;
@@ -32,20 +35,9 @@ const FoodImage = Styled.Image``
 const FoodNameLabel = Styled.Text`
     margin-top: 5px;
     font-size: 16px;
-    color: #111111;
+    color: ${textColor};
     font-weight: bold;
 `;
-const SkipButtonContainer = Styled.TouchableOpacity`
-    flex: 0.5
-    align-items: center;
-    justify-content: center;
-    backgroundColor: #DDDDDD;
-`
-const SkipLabel = Styled.Text`
-    color: white;
-    backgroundColor: gray;
-    font-size: 10px;
-`
 
 
 const Choice  = () => {
@@ -117,54 +109,39 @@ const Choice  = () => {
 
     const ListHeader = () => {
         return(
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-                <Text style={{
-                    fontSize: 30, fontWeight: "bold",
-                    }}>#{tag}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
+                <Text style={{ fontSize: 30, fontWeight: "bold",}}>#{tag}</Text>
                 <TouchableOpacity
                     style={{
-                        backgroundColor: 'blue'
-                    }} 
-                    
-                />
+                        right: 20,
+                        position: 'absolute',
+                        alignSelf: 'flex-end',
+                        borderRadius: 10,
+                        backgroundColor: '#28292b',
+                        justifyContent: 'center', 
+                        alignItems: 'center'
+                    }}
+                    onPress={()=>{
+                        initTag();
+                        initFood();
+                    }}>
+                <   Text style={{ padding: 7, color: 'white' }}>pass</Text>
+                </TouchableOpacity>
             </View>
         );
     }
-    const ListFooter = () => {
-        return(
-            <TouchableOpacity
-                style={{
-                    justifyContent: 'center', 
-                    alignItems: 'center'
-                }}
-                onPress={()=>{
-                    initTag();
-                    initFood();
-                }}
-            >
-                <Text
-                    style={{
-                        marginTop: 5,
-                        width: Dimensions.get('window').width / 2 ,
-                        borderRadius: 10,
-                        borderWidth: 1,
-                        borderColor: '#fff',
-                        textAlign: 'center',
-                        padding: 5,
-                        backgroundColor: 'gray',
-                        color: 'white'
-                    }}
-                >pass</Text>
-            </TouchableOpacity>
-        );
-    }
+    // const ListFooter = () => {
+    //     return(
+            
+    //     );
+    // }
 
     return(
         <Container>
             <HeaderText>태그와 어울리는 음식을 선택해주세요</HeaderText>
             <FoodContainer
                 ListHeaderComponent = {ListHeader}
-                ListFooterComponent = {ListFooter}
+                //ListFooterComponent = {ListFooter}
                 numColumns = {2}
                 data={data}
                 keyExtractor={(item, index) => {
@@ -185,7 +162,6 @@ const Choice  = () => {
                     </FoodImageContainer>
                 )}
             />
-            
         </Container>
     );
 }
