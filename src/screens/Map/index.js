@@ -41,7 +41,7 @@ const ResearchText = Styled.Text`
   font-size: 15px;
 `
 
-const API_KEY = 'd7bfcb1ceec975e2c1a8f6ce48e1abde'
+const API_KEY = ''
 const URL = 'https://dapi.kakao.com/v2/local/search/keyword.json?page=45&size=15&sort=accuracy&category_group_code=FD6'
 
 const Map = ({ navigation, route }) => {
