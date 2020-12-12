@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
-import { Dimensions, Image, View, RefreshControl} from 'react-native'
+import { Dimensions, Image, View, RefreshControl } from 'react-native'
 
 import FoodImageList from './FoodImageList'
 import LoadingView from '~/Components/Loading'
@@ -38,38 +38,37 @@ const TagText = Styled.Text`
 
 
 const Home = ({ navigation }) => {
-  const { location, isLoaded} = useContext(UserContext)
-  const {weather, icon, season} = location
+  const { location, isLoaded } = useContext(UserContext)
+  const { weather, icon, season } = location
 
-  const [randomFood,setRandomFood] = useState({})
+  const [randomFood, setRandomFood] = useState({})
   const [refreshing, setRefreshing] = useState(false);
 
   const initRandomMainFood = () => {
-      database().ref(`/Food`).once('value', snapshot => {
-        let length = Object.keys(snapshot.val()).length
-        let index = Math.floor(Math.random() * length)
-        setRandomFood(snapshot.val()[index]);
-        console.log(randomFood)
-      });
+    database().ref(`/Food`).once('value', snapshot => {
+      let length = Object.keys(snapshot.val()).length
+      let index = Math.floor(Math.random() * length)
+      setRandomFood(snapshot.val()[index]);
+      console.log(randomFood)
+    });
   }
-  useLayoutEffect(()=>{
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-          <SettingButton
-              onPress={ () => {
-                navigation.navigate('Setting')
-              }}>
-              <Icon name="cog" size={25} color="#ffffff" />
-          </SettingButton>
+        <SettingButton
+          onPress={() => {
+            navigation.navigate('Setting')
+          }}>
+          <Icon name="cog" size={25} color="#ffffff" />
+        </SettingButton>
       )
     })
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     initRandomMainFood();
     SplashScreen.hide();
-    console.log(location)
-  },[])
+  }, [])
 
   const wait = (timeout) => {
     return new Promise(resolve => {
@@ -89,48 +88,53 @@ const Home = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
       <FoodImage
+        size={'cover'}
         width={(Dimensions.get('window').width) - 10}
         height={250}
         fontsize={30}
-        food={randomFood} 
-        onPress={()=>{navigation.navigate('StackMap',{
-          screen : 'Map',
-          params : {name: randomFood.name}
-        })}}
-        />
+        food={randomFood}
+        onPress={() => {
+          navigation.navigate('StackMap', {
+            screen: 'Map',
+            params: { name: randomFood.name }
+          })
+        }}
+      />
       <CatagoriContainer>
-          {isLoaded ?
-            <View>
-                <TagLabel>
-                  <TagText>#현재 날씨 : {weather}</TagText>
-                  <Image
-                      source={{ uri: `http://openweathermap.org/img/wn/${icon}@2x.png` }}
-                      style={{ width: 40, height: 40, marginLeft: 5 }}
-                    />
-                </TagLabel>
-                <FoodImageList 
-                  catagori="Weather" 
-                  tag={weather}
-                  onPress={(food) => {
-                    navigation.navigate('StackMap', {
-                      screen : 'Map',
-                      params : {name: food.name}
-                    });
-                  }} />
-            </View>
-            :
-              <LoadingView />
-            }
-          <TagLabel><TagText>#{season}</TagText></TagLabel>
-          <FoodImageList 
-            catagori="Anniversary" 
-            tag={season} 
-            onPress={(food) => {
-              navigation.navigate('StackMap', {
-                screen : 'Map',
-                params : {name: food.name}
-              });
-            }} />
+        {isLoaded ?
+          <View>
+            <TagLabel onPress={() => { navigation.navigate('Chart', { tag: weather, catagori: 'Weather' }) }}>
+              <TagText>#현재 날씨 : {weather}</TagText>
+              <Image
+                source={{ uri: `http://openweathermap.org/img/wn/${icon}@2x.png` }}
+                style={{ width: 40, height: 40, marginLeft: 5 }}
+              />
+            </TagLabel>
+            <FoodImageList
+              catagori="Weather"
+              tag={weather}
+              onPress={(food) => {
+                navigation.navigate('StackMap', {
+                  screen: 'Map',
+                  params: { name: food.name }
+                });
+              }} />
+          </View>
+          :
+          <LoadingView />
+        }
+        <TagLabel onPress={() => { navigation.navigate('Chart', { tag: season, catagori: 'Anniversary' }) }}>
+          <TagText>#{season}</TagText>
+        </TagLabel>
+        <FoodImageList
+          catagori="Anniversary"
+          tag={season}
+          onPress={(food) => {
+            navigation.navigate('StackMap', {
+              screen: 'Map',
+              params: { name: food.name }
+            });
+          }} />
       </CatagoriContainer>
 
     </Container>

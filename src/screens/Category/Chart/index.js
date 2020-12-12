@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import Styled from 'styled-components/native'
-import {FlatList} from 'react-native'
+import { FlatList } from 'react-native'
 
 import database from '@react-native-firebase/database'
 
@@ -41,54 +41,61 @@ const LikeCount = Styled.Text`
   font-size: 17px;
   color: ${textColor}
 `
-const Chart = ({navigation, route}) => {
-  
+const Chart = ({ navigation, route }) => {
+
   const [data, setData] = useState({
-    tag : route.params.tag, 
+    tag: route.params.tag,
     catagori: route.params.catagori,
-    foodlist : [],
+    foodlist: [],
     like: [],
   })
-  
+
   const initData = () => {
     let key = [];
     let food = [];
     let likeCount = [];
     database().ref(`Tag/${data.catagori}/${data.tag}`).orderByValue().once('value', snapshot => {
-      snapshot.forEach( (value) => {
+      snapshot.forEach((value) => {
         key.push(value.key)
         likeCount.push(value)
       })
       key.reverse();
       likeCount.reverse();
     })
-    .then(()=>{
-      database().ref(`Food/`).once('value',snapshot=>{
-        key.forEach( (val, index) => {
-          let temp = JSON.stringify(likeCount[index])
-          food.push(Object.assign(snapshot.child(val).val(), {like: temp}))
+      .then(() => {
+        database().ref(`Food/`).once('value', snapshot => {
+          key.forEach((val, index) => {
+            let temp = JSON.stringify(likeCount[index])
+            food.push(Object.assign(snapshot.child(val).val(), { like: temp }))
+          });
+          setData({ foodlist: food });
         });
-        setData({foodlist: food});  
-      });
-    })
+      })
   }
-  useEffect(()=>{ 
+
+  useEffect(() => {
     initData();
+  }, [])
+
+  useLayoutEffect(()=>{
+    navigation.setOptions({ headerTitle: `#${route.params.tag }`});
   },[])
 
-  const renderItem = ({item, index}) => {
-    return(
+  const renderItem = ({ item, index }) => {
+    return (
       <ItemContainer
-        onPress={()=>{navigation.navigate('StackMap',{
-          screen : 'Map',
-          params : {name: item.name}
-        })}}
+        onPress={() => {
+          navigation.navigate('StackMap', {
+            screen: 'Map',
+            params: { name: item.name }
+          })
+        }}
       >
         <LankText>{index + 1}</LankText>
         <FootImage
           resizeMode={'cover'}
-          style={{width: 150, height: 120}} 
-          source={{uri: item.url}}
+          style={{ width: 150, height: 120 }}
+          source={{ uri: item.url }}
         />
         <FoodLabel>
           <FoodName>{item.name}</FoodName>
@@ -97,12 +104,12 @@ const Chart = ({navigation, route}) => {
       </ItemContainer>
     )
   }
-  return(
+  return (
     <Container>
       <FlatList
         data={data.foodlist}
         keyExtractor={(item, index) => {
-            return `${item.id}-${index}`;
+          return `${item.id}-${index}`;
         }}
         renderItem={renderItem} />
     </Container>

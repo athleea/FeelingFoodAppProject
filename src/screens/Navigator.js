@@ -1,11 +1,11 @@
-import React,{useContext} from 'react';
-import {Image,Text} from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { Image, Text } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import {UserContext} from '~/Context/User';
+import { UserContext } from '~/Context/User';
 import Home from './Home'
 import Category from './Category'
 import Map from './Map'
@@ -23,11 +23,11 @@ const BarColor = '#28292b'
 const BarTitleColor = '#ffffff'
 
 const StackHome = () => {
-    return(
+    return (
         <Stack.Navigator>
-            <Stack.Screen 
+            <Stack.Screen
                 name="Home"
-                component={Home} 
+                component={Home}
                 options={{
                     title: '추천',
                     headerTintColor: BarTitleColor,
@@ -35,14 +35,23 @@ const StackHome = () => {
                         backgroundColor: BarColor,
                         borderBottomWidth: 0
                     },
-                }}
-
-                />
-            <Stack.Screen 
+                }}/>
+            <Stack.Screen
                 name="Setting"
                 component={Setting}
                 options={{
                     title: '설정',
+                    headerTintColor: BarTitleColor,
+                    headerStyle: {
+                        backgroundColor: BarColor,
+                        borderBottomWidth: 0
+                    },
+                }} />
+            <Stack.Screen
+                name="Chart"
+                component={Chart}
+                options={{
+                    title: '순위',
                     headerTintColor: BarTitleColor,
                     headerStyle: {
                         backgroundColor: BarColor,
@@ -54,9 +63,9 @@ const StackHome = () => {
 }
 
 const StackCategory = () => {
-    return(
+    return (
         <Stack.Navigator>
-            <Stack.Screen 
+            <Stack.Screen
                 name="Catagori"
                 component={Category}
                 options={{
@@ -84,24 +93,24 @@ const StackCategory = () => {
 }
 
 const StackMap = () => {
-    return(
+    return (
         <Stack.Navigator>
-            <Stack.Screen 
+            <Stack.Screen
                 name="Map"
                 component={Map}
-                initialParams={{ name: '맛집' }}
-                options={{headerShown: false}}/>
-            <Stack.Screen 
+                initialParams={{ name: '삼겹살' }}
+                options={{ headerShown: false }} />
+            <Stack.Screen
                 name="WebView"
                 component={FoodWebView}
                 options={{
                     title: '',
-                    headerTintColor: '#28292b',
+                    headerTintColor: '#ffffff',
                     headerStyle: {
                         backgroundColor: BarColor,
                         borderBottomWidth: 0
                     },
-                }}/>
+                }} />
         </Stack.Navigator>
     )
 }
@@ -112,18 +121,18 @@ const MainNavigator = () => {
             <BottomTab.Navigator
                 tabBarOptions={{
                     activeTintColor: BarTitleColor,
-                    labelStyle: { fontSize : 12 },
+                    labelStyle: { fontSize: 12 },
                     style: { backgroundColor: BarColor },
-                  }}
+                }}
             >
                 <BottomTab.Screen
                     name="Home"
                     component={StackHome}
                     options={{
                         tabBarLabel: '추천',
-                        tabBarIcon: ({color, focused}) => (
+                        tabBarIcon: ({ color, focused }) => (
                             focused ? <Icon name="home" size={20} color="#ffffff" />
-                                    : <Icon name="home" size={20} color="#111111" />
+                                : <Icon name="home" size={20} color="#111111" />
                         )
                     }} />
                 <BottomTab.Screen
@@ -131,33 +140,33 @@ const MainNavigator = () => {
                     component={StackCategory}
                     options={{
                         tabBarLabel: '카테고리',
-                        tabBarIcon: ({color, focused}) => (
+                        tabBarIcon: ({ color, focused }) => (
                             focused ? <Icon name="th-list" size={20} color="#ffffff" />
-                                    : <Icon name="th-list" size={20} color="#111111" />
+                                : <Icon name="th-list" size={20} color="#111111" />
                         )
                     }}
                 />
-                <BottomTab.Screen 
+                <BottomTab.Screen
                     name="StackMap"
                     component={StackMap}
                     options={{
                         tabBarLabel: '지도',
-                        tabBarIcon: ({color, focused}) => (
+                        tabBarIcon: ({ color, focused }) => (
                             focused ? <Icon name="map" size={20} color="#ffffff" />
-                                    : <Icon name="map" size={20} color="#111111" />
+                                : <Icon name="map" size={20} color="#111111" />
                         )
                     }}
-                    
-                    
+
+
                 />
                 <BottomTab.Screen
                     name="Choice"
                     component={Choice}
                     options={{
                         tabBarLabel: '선택',
-                        tabBarIcon: ({color, focused}) => (
+                        tabBarIcon: ({ color, focused }) => (
                             focused ? <Icon name="mouse-pointer" size={20} color="#ffffff" />
-                                    : <Icon name="mouse-pointer" size={20} color="#111111" />
+                                : <Icon name="mouse-pointer" size={20} color="#111111" />
                         )
                     }}
                 />
@@ -168,9 +177,18 @@ const MainNavigator = () => {
 
 export default () => {
 
-    const {isLoaded} = useContext(UserContext);
-    return(
-        isLoaded ? <MainNavigator /> : <Text>Loading..</Text>
-        
+    const { isLoaded, firstUser, setFirstUser, getData } = useContext(UserContext);
+
+    useEffect(() => {
+        const isFirstLaunch = getData();
+        //console.log('[App() check]: ' + JSON.stringify(isFirstLaunch));
+        if (isFirstLaunch) {
+            setFirstUser(true)
+        }
+    })
+
+    return (
+        isLoaded ? <MainNavigator /> : <Choice />
     )
 }
+

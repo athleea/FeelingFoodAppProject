@@ -1,23 +1,42 @@
 import React, {createContext, useState, useEffect} from 'react';
 import {Alert} from 'react-native'
 
-import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from 'react-native-geolocation-service';
 import {PermissionsAndroid} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultContext = {
     latitude: 37.507390607185336,
     longitude: 126.87669615985372
 };
 
-const API_KEY = ''
+const API_KEY = '6b3df92331ad3dd3d5e970ffe1382aa5'
 
 const UserContext = createContext(defaultContext);
+
 
 const UserContextProvider = ({children}) => {
 
     const [location, setLocation] = useState({});
-    const [isLoaded, setIsLoaded] = useState(true)
+    const [isLoaded, setIsLoaded] = useState(true);
+    const [firstUser, setFirstUser] = useState(true);
+
+    const storeData = async() => {
+        await AsyncStorage.setItem('@storage_Key', 'true')
+    }
+    
+    const getData = async() => {
+        try {
+            const value = await AsyncStorage.getItem('@storage_Key')
+            if (value === null) {
+                storeData();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
 
     const requestPermission = async() => {
         try{
@@ -137,11 +156,19 @@ const UserContextProvider = ({children}) => {
         setCurrentLocation();
     },[]);
 
+    useEffect(()=>{
+
+    },[firstUser])
+
     return (
         <UserContext.Provider
             value={{
                 location,
                 isLoaded,
+                firstUser,
+                setFirstUser,
+                getData,
+                storeData,
             }}>
                 {children}
         </UserContext.Provider>

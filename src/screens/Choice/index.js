@@ -1,11 +1,13 @@
-import React, { useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
+import {UserContext} from '~/Context/User';
 
 import SplashScreen from 'react-native-splash-screen';
 
 import Styled from 'styled-components/native'
 
 import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const backgroundcolor = "#eed974"
 const textColor = "#28292b"
@@ -40,7 +42,11 @@ const FoodNameLabel = Styled.Text`
 `;
 
 
+
+
 const Choice  = () => {
+
+    const {setFirstUser, storeData} = useContext(UserContext)
 
     const getRandomCatagori = (obj) => {
         return obj[Math.floor(Math.random() * obj.length)]
@@ -89,6 +95,11 @@ const Choice  = () => {
     const saveData = async(id) => {
         const reference = database().ref(`/Tag/${tagType}/${tag}/${id}`);
         return await reference.transaction(currentLikes => {
+            setCount(count + 1)
+            if(count===5){
+                setFirstUser(false)
+                storeData('NOT_FIRST_USER')
+            }
             if (currentLikes === null) {
                 return 1;
             }
@@ -96,10 +107,12 @@ const Choice  = () => {
         });
     }
     
+    
 
     const [data, setData] = useState([]);
     const [tag, setTag] = useState("");
     const [tagType, setTagType] = useState("");
+    const [count, setCount] = useState(0)
 
     useEffect( ()=> {
         SplashScreen.hide();

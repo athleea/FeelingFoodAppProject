@@ -7,10 +7,11 @@ const Container = Styled.TouchableOpacity`
     align-items: center;
 `
 const RestaurantName = Styled.Text`
+    color: #ffffff;
     font-size: 20px;
     font-weight: bold;
 `
-const RestaurantLabel = Styled.Text`
+const RestaurantDetails = Styled.Text`
     font-size: 15px;
 `
 const Restaurant = ({name, category, address, phone, onPress}) => {
@@ -18,9 +19,9 @@ const Restaurant = ({name, category, address, phone, onPress}) => {
         <Container
             onPress={onPress} >
           <RestaurantName>{name}</RestaurantName>
-          <RestaurantLabel>{category}</RestaurantLabel>
-          <RestaurantLabel>주소 : {address}</RestaurantLabel>
-          <RestaurantLabel>번호 : {phone}</RestaurantLabel>
+          <RestaurantDetails>{category}</RestaurantDetails>
+          <RestaurantDetails>주소 : {address}</RestaurantDetails>
+          <RestaurantDetails>번호 : {phone}</RestaurantDetails>
         </Container>
     )
 }

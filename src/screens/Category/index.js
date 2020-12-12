@@ -29,7 +29,7 @@ const Catagori = () => {
         initialParams={{ catagori: 'Anniversary' }}
         name="Season"
         component={TagList}
-        options={{ tabBarLabel: '기념일' }}
+        options={{ tabBarLabel: '행사/계절' }}
       />
       <TopTab.Screen
         initialParams={{ catagori: 'Weather' }}
