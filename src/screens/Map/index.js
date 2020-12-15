@@ -41,7 +41,7 @@ const ResearchText = Styled.Text`
   font-size: 15px;
 `
 
-const API_KEY = ''
+const API_KEY = 'd7bfcb1ceec975e2c1a8f6ce48e1abde'
 const URL = 'https://dapi.kakao.com/v2/local/search/keyword.json?page=45&size=15&sort=accuracy&category_group_code=FD6'
 
 const Map = ({ navigation, route }) => {
@@ -53,7 +53,7 @@ const Map = ({ navigation, route }) => {
     longitude: location.longitude
   })
   const [marker, setMarker] = useState([])
-  const [query, setQuery] = useState(route.params.name)
+  const [query, setQuery] = useState()
   const [isFocus, setIsFocus] = useState(false)
   const [radius, setRadius] = useState(1000)
   const [move, setMove] = useState(true)
@@ -81,6 +81,7 @@ const Map = ({ navigation, route }) => {
   }
 
   useEffect(() => {
+    setQuery(route.params.name)
     database().ref('/Food/').once('value', snapshot => {
       let list = [];
       let value = snapshot.val()
@@ -92,19 +93,16 @@ const Map = ({ navigation, route }) => {
   }, [])
 
   useEffect(() => {
-    setQuery(route.params.name)
+    if(route.params.name){
+      setQuery(route.params.name)
+    }
     initMarker();
   }, [isFocus])
+
 
   useEffect(() => {
     initMarker();
   }, [query])
-
-  useEffect(() => {
-
-  }, [radius])
-
-
 
   useFocusEffect(
     useCallback(() => {
@@ -197,8 +195,12 @@ const Map = ({ navigation, route }) => {
           color: 'white',
         }}
 
-        onValueChange={(itemValue, itemIndex) =>
+        onValueChange={(itemValue, itemIndex) => {
+          route.params.name = itemValue
           setQuery(itemValue)
+          initMarker()
+        }
+          
         }>
         {food.map((value, index) => {
           return (

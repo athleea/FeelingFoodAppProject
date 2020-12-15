@@ -66,8 +66,10 @@ const Home = ({ navigation }) => {
   }, [])
 
   useEffect(() => {
+    if(isLoaded){
+      SplashScreen.hide();  
+    }
     initRandomMainFood();
-    SplashScreen.hide();
   }, [])
 
   const wait = (timeout) => {

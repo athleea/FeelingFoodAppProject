@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Image, Text } from 'react-native';
+import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { UserContext } from '~/Context/User';
 import Home from './Home'
 import Category from './Category'
 import Map from './Map'
@@ -175,20 +173,5 @@ const MainNavigator = () => {
     )
 }
 
-export default () => {
-
-    const { isLoaded, firstUser, setFirstUser, getData } = useContext(UserContext);
-
-    useEffect(() => {
-        const isFirstLaunch = getData();
-        //console.log('[App() check]: ' + JSON.stringify(isFirstLaunch));
-        if (isFirstLaunch) {
-            setFirstUser(true)
-        }
-    })
-
-    return (
-        isLoaded ? <MainNavigator /> : <Choice />
-    )
-}
+export default MainNavigator
 
