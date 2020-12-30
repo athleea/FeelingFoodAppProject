@@ -64,7 +64,7 @@ const StackCategory = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Catagori"
+                name="Category"
                 component={Category}
                 options={{
                     title: '카테고리',

@@ -44,7 +44,7 @@ const Chart = ({ navigation, route }) => {
 
   const [data, setData] = useState({
     tag: route.params.tag,
-    catagori: route.params.catagori,
+    category: route.params.category,
     foodlist: [],
     like: [],
   })
@@ -53,7 +53,7 @@ const Chart = ({ navigation, route }) => {
     let key = [];
     let food = [];
     let likeCount = [];
-    database().ref(`Tag/${data.catagori}/${data.tag}`).orderByValue().once('value', snapshot => {
+    database().ref(`Tag/${data.category}/${data.tag}`).orderByValue().once('value', snapshot => {
       snapshot.forEach((value) => {
         key.push(value.key)
         likeCount.push(value)

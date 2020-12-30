@@ -7,7 +7,7 @@ const textColor = "#28292b"
 
 const TopTab = createMaterialTopTabNavigator();
 
-const Catagori = () => {
+const Category = () => {
   return (
     <TopTab.Navigator
       labeled="true"
@@ -18,19 +18,19 @@ const Catagori = () => {
       }}
     >
       <TopTab.Screen
-        initialParams={{ catagori: 'Emotion' }}
+        initialParams={{ category: 'Emotion' }}
         name="Emotion"
         component={TagList}
         options={{ tabBarLabel: '감정' }}
       />
       <TopTab.Screen
-        initialParams={{ catagori: 'Anniversary' }}
+        initialParams={{ category: 'Anniversary' }}
         name="Season"
         component={TagList}
         options={{ tabBarLabel: '행사/계절' }}
       />
       <TopTab.Screen
-        initialParams={{ catagori: 'Weather' }}
+        initialParams={{ category: 'Weather' }}
         name="Weather"
         component={TagList}
         options={{ tabBarLabel: '날씨' }}
@@ -40,4 +40,4 @@ const Catagori = () => {
   );
 }
 
-export default Catagori
+export default Category

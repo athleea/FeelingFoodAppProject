@@ -21,18 +21,18 @@ const TagText = Styled.Text`
 const TagList = ({navigation, route}) => {
 
     const [key,setKey] = useState([]);
-    const [catagori, setCatagori] = useState('')
+    const [category, setCategory] = useState('')
   
-    const initKey = (catagori) => {
-      database().ref(`Tag/${catagori}`).once('value', snapshot => {
+    const initKey = (category) => {
+      database().ref(`Tag/${category}`).once('value', snapshot => {
         let keyArray = Object.keys(snapshot.val());
         setKey(keyArray);
-        setCatagori(catagori);
+        setCategory(category);
       });
     }
     
     useEffect(()=>{
-      initKey(route.params.catagori)
+      initKey(route.params.category)
     },[])
   
   
@@ -42,7 +42,7 @@ const TagList = ({navigation, route}) => {
           return(
             <Item key={item.toString()}
               onPress={ () =>{
-                navigation.navigate('Chart', {tag : item, catagori: catagori})
+                navigation.navigate('Chart', {tag : item, category: category})
               }}
             >
               <TagText>{item}</TagText>

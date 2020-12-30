@@ -24,7 +24,7 @@ const WeatherIcon = Styled.Image`
   marginLeft: 5px;
 `
 
-const FoodImageList = ({catagori, tag, onPress, tagPress, icon, isLoaded}) => {
+const FoodImageList = ({category, tag, onPress, tagPress, icon, isLoaded}) => {
 
   const [data, setData] = useState([])
   
@@ -32,7 +32,7 @@ const FoodImageList = ({catagori, tag, onPress, tagPress, icon, isLoaded}) => {
     let key = [];
     let food = [];
     
-    database().ref(`Tag/${catagori}/${tag}`).orderByValue().limitToLast(5).once('value', snapshot => {
+    database().ref(`Tag/${category}/${tag}`).orderByValue().limitToLast(5).once('value', snapshot => {
       snapshot.forEach(value => {
         key.push(value.key)
       })
@@ -81,9 +81,6 @@ const FoodImageList = ({catagori, tag, onPress, tagPress, icon, isLoaded}) => {
           renderItem={renderItem} />
       </Container> :
       <Loading /> 
-    
-    
-      
   );
 }
 
