@@ -1,10 +1,8 @@
 import React from 'react'
-
 import TagList from './TagList'
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-const backgroundcolor = "#eed974"
 const textColor = "#28292b"
 
 const TopTab = createMaterialTopTabNavigator();

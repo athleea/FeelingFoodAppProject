@@ -1,10 +1,30 @@
 import React, {useEffect, useState} from 'react'
 import {FlatList} from 'react-native'
-import FoodImage from '~/Components/FoodImage'
 
+import FoodImage from '~/Components/FoodImage'
+import Loading from '~/Components/Loading'
+
+import Styled from 'styled-components/native'
 import database from '@react-native-firebase/database'
 
-const FoodImageList = ({catagori, tag, onPress}) => {
+const Container = Styled.View``
+const TagButton = Styled.TouchableOpacity`
+  flexDirection: row;
+  align-items: center;
+  marginLeft: 10px;
+`;
+const Label = Styled.Text`
+  color: #28292b;
+  font-size: 20px;
+  font-weight: bold;
+`
+const WeatherIcon = Styled.Image`
+  width: 40px;
+  height: 40px;
+  marginLeft: 5px;
+`
+
+const FoodImageList = ({catagori, tag, onPress, tagPress, icon, isLoaded}) => {
 
   const [data, setData] = useState([])
   
@@ -23,7 +43,6 @@ const FoodImageList = ({catagori, tag, onPress}) => {
               food.push(snapshot.child(val).val())
           });
           setData(food);
-          console.log(data)
       });
     })
   }
@@ -47,13 +66,24 @@ const FoodImageList = ({catagori, tag, onPress}) => {
   }
 
   return(
-      <FlatList
-        horizontal={true}
-        data={data}
-        keyExtractor={(item, index) => {
-            return `${item.id}-${index}`;
-        }}
-        renderItem={renderItem} />
+    isLoaded ? 
+      <Container>
+        <TagButton onPress={tagPress}>
+          <Label>#{tag}</Label>
+          {icon ? <WeatherIcon source={{uri : icon}}/>: <></>}
+        </TagButton>
+        <FlatList
+          horizontal={true}
+          data={data}
+          keyExtractor={(item, index) => {
+              return `${item.id}-${index}`;
+          }}
+          renderItem={renderItem} />
+      </Container> :
+      <Loading /> 
+    
+    
+      
   );
 }
 

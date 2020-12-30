@@ -3,12 +3,10 @@ import Styled from 'styled-components/native'
 
 import database from '@react-native-firebase/database'
 
-const backgroundcolor = "#eed974"
-const textColor = "#28292b"
 
 const Container = Styled.ScrollView`
   flex: 1;
-  backgroundColor: ${backgroundcolor};
+  backgroundColor: #eee;
 `
 const Item = Styled.TouchableOpacity`
   padding: 10px;
@@ -17,7 +15,7 @@ const Item = Styled.TouchableOpacity`
 const TagText = Styled.Text`
   marginLeft: 10px;
   font-size: 20px;
-  color: ${textColor}
+  color: #28292b
 `
 
 const TagList = ({navigation, route}) => {

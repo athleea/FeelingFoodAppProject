@@ -1,19 +1,15 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { Dimensions } from 'react-native';
 
 import { UserContext } from '~/Context/User';
-import Restaurant from '~/Components/RestaurantList';
+import Restaurant from './RestaurantList'
 
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Picker } from '@react-native-picker/picker';
 import MapView, { Marker, PROVIDER_GOOGLE, Circle } from 'react-native-maps';
 import Styled from 'styled-components/native'
 import database from '@react-native-firebase/database'
-import { Dimensions } from 'react-native';
-
-
-const backgroundcolor = "#28292b"
-
 
 const Container = Styled.View`
   justify-content: center;
@@ -30,7 +26,7 @@ const Research = Styled.TouchableOpacity`
   alignSelf: center;
   bottom: 5%
   width: 100px;
-  backgroundColor: ${backgroundcolor};
+  backgroundColor: #28292b;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
@@ -187,7 +183,7 @@ const Map = ({ navigation, route }) => {
       <Picker
         selectedValue={query}
         style={{
-          backgroundColor: backgroundcolor,
+          backgroundColor: '#28292b',
           top: 0,
           position: 'absolute',
           width: Dimensions.get('window').width,

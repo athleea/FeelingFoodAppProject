@@ -1,52 +1,68 @@
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState, useContext, } from 'react';
+import { Dimensions } from 'react-native';
 
-import SplashScreen from 'react-native-splash-screen';
+import { UserContext } from '~/Context/User';
+import FoodImage from '~/Components/FoodImage'
 
 import Styled from 'styled-components/native'
-
 import database from '@react-native-firebase/database';
-
-const backgroundcolor = "#eed974"
-const textColor = "#28292b"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
 
 const Container = Styled.SafeAreaView`
     flex: 1;
     align-items: center;
     justify-content: center;
-    backgroundColor: ${backgroundcolor};
-`
-const HeaderText = Styled.Text`
-    flex: 0.5;
-    color: ${textColor}
-    fontWeight: bold;
-    font-size: 20px;
-    marginTop: 10px;
+    backgroundColor: #eee;
 `
 const FoodContainer = Styled.FlatList`
     flex: 7;
 `;
-const FoodImageContainer = Styled.TouchableOpacity`
+const HeaderView = Styled.View`
+    width: 100%
+    flexDirection: row;
+    margin: 10px;
     align-items: center;
-    justify-content: center
-    padding: 4px;
-`;
-const FoodImage = Styled.Image``
-const FoodNameLabel = Styled.Text`
-    margin-top: 5px;
-    font-size: 16px;
-    color: ${textColor};
+    justify-content: center;
+`
+const TagText = Styled.Text`
+    alignSelf: center;
+    font-size: 30px;
     font-weight: bold;
-`;
+`
+const CountText = Styled.Text`
+    position: absolute;
+    left: 20px;
+    alignSelf: center;
+    font-size: 20px;
+    font-weight: bold;
+`
+const PassButton = Styled.TouchableHighlight`
+    position: absolute;
+    right: 20px;
+    borderRadius: 10px;
+    backgroundColor: #28292b;
+    justify-content: center;
+    align-items: center;
+`
+const Label = Styled.Text`
+    color: white;
+    padding: 5px;
+`
 
+const Choice = ({ }) => {
 
+    const { firstUser, setFirstUser } = useContext(UserContext);
+    let mount = true;
+    const [data, setData] = useState({
+        food: undefined,
+        tag: undefined
+    });
+    const [mainTag, setMainTag] = useState("");
+    const [mainFood, setMainFood] = useState([]);
+    const [count, setCount] = useState(0)
 
-
-const Choice = () => {
-
-    const getRandomCatagori = (obj) => {
-        return obj[Math.floor(Math.random() * obj.length)]
-    }
+    let category = '';
     const getRandomNumber = (obj) => {
         let num = [0, 0, 0, 0];
         for (let i = 0; i < num.length; i++) {
@@ -60,111 +76,91 @@ const Choice = () => {
         }
         return num
     }
-    const initTag = () => {
-        const tagCatagori = ["Weather", "Emotion", "Anniversary"]
-        let type = getRandomCatagori(tagCatagori)
-        setTagType(type);
-        try {
-            database().ref(`/Tag/${type}`).once('value')
-                .then(snapshot => {
-                    let tags = Object.keys(snapshot.val());
-                    let randomTag = getRandomCatagori(tags);
-                    setTag(randomTag);
-                });
-        } catch (e) {
-            console.log(e)
-        }
-    }
-    const initFood = async () => {
-        let array = [];
-        await database().ref(`/Food/`).once('value')
+    const initData = () => {
+        database().ref('/').once('value')
             .then(snapshot => {
-                let food = snapshot.val();
-                let num = getRandomNumber(food)
-                for (let j = 0; j < num.length; j++) {
-                    array.push(food[num[j]])
+                if (mount) {
+                    setData({
+                        tag: snapshot.val()['Tag'],
+                        food: snapshot.val()['Food']
+                    });
+                    randomData(snapshot.val()['Tag'], snapshot.val()['Food']);
                 }
-
             });
-        setData(array);
+    }
+    const randomData = (tag, food) => {
+
+        const tagCategory = ["Weather", "Emotion", "Anniversary"];
+        category = tagCategory[Math.floor(Math.random() * tagCategory.length)];
+
+        let array = [];
+        let key = Object.keys(tag[category]);
+        let num = getRandomNumber(food);
+        num.forEach(index => {
+            array.push(food[index]);
+        });
+        setMainTag(key[Math.floor(Math.random() * key.length)]);
+        setMainFood(array);
+
     }
     const saveData = async (id) => {
-        const reference = database().ref(`/Tag/${tagType}/${tag}/${id}`);
+        const reference = database().ref(`/Tag/${category}/${mainTag}/${id}`);
+        setCount(count + 1);
         return await reference.transaction(currentLikes => {
-
             if (currentLikes === null) {
                 return 1;
             }
             return currentLikes + 1;
         });
+
     }
-
-
-
-    const [data, setData] = useState([]);
-    const [tag, setTag] = useState("");
-    const [tagType, setTagType] = useState("");
 
     useEffect(() => {
-        SplashScreen.hide();
-        initTag();
-        initFood();
+        initData();
+        setTimeout(() => {
+            SplashScreen.hide();
+        }, 2000);
+        return (() => {
+            mount = false
+        });
     }, []);
 
-    const ListHeader = () => {
+    const renderItem = ({ item }) => {
         return (
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
-                <Text style={{ fontSize: 30, fontWeight: "bold", }}>#{tag}</Text>
-                <TouchableOpacity
-                    style={{
-                        right: 20,
-                        position: 'absolute',
-                        alignSelf: 'flex-end',
-                        borderRadius: 10,
-                        backgroundColor: '#28292b',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
-                    onPress={() => {
-                        initTag();
-                        initFood();
-                    }}>
-                    <   Text style={{ padding: 7, color: 'white' }}>pass</Text>
-                </TouchableOpacity>
-            </View>
-        );
+            <FoodImage
+                food={item}
+                onPress={() => {
+                    saveData(item.id).then(async () => {
+                        if (firstUser && count >= 5) {
+                            await AsyncStorage.setItem('user', 'true');
+                            setFirstUser(false);
+                        } else {
+                            randomData(data.tag, data.food);
+                        }
+                    });
+                }}
+                width={(Dimensions.get('window').width) / 2 - 10}
+                height={200}
+                fontsize={16}
+            />
+        )
     }
-    // const ListFooter = () => {
-    //     return(
-
-    //     );
-    // }
-
     return (
         <Container>
-            <HeaderText>태그와 어울리는 음식을 선택해주세요</HeaderText>
+            <HeaderView>
+                {firstUser ? <CountText>{count}/5</CountText> : <></>}
+                <TagText>#{mainTag}</TagText>
+                <PassButton onPress={() => { randomData(data.tag, data.food); }}>
+                    <Label>Pass</Label>
+                </PassButton>
+            </HeaderView>
             <FoodContainer
-                ListHeaderComponent={ListHeader}
-                //ListFooterComponent = {ListFooter}
                 numColumns={2}
-                data={data}
+                data={mainFood}
                 keyExtractor={(item, index) => {
                     return `foodlist-${item.id}-${index}`;
                 }}
-                renderItem={({ item, index }) => (
-                    <FoodImageContainer
-                        onPress={() => {
-                            saveData(item.id).then(() => {
-                                initTag();
-                                initFood();
-                            })
-                        }}>
-                        <FoodImage
-                            source={{ uri: item.url }}
-                            style={{ width: (Dimensions.get('window').width) / 2 - 10, height: 201 }} />
-                        <FoodNameLabel>{item.name}</FoodNameLabel>
-                    </FoodImageContainer>
-                )}
+                renderItem={renderItem}
             />
         </Container>
     );

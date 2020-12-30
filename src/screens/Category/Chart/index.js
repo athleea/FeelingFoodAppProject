@@ -4,12 +4,11 @@ import { FlatList } from 'react-native'
 
 import database from '@react-native-firebase/database'
 
-const backgroundcolor = "#eed974"
 const textColor = "#28292b"
 
 
 const Container = Styled.SafeAreaView`
-  backgroundColor: ${backgroundcolor}
+  backgroundColor: #eee
 `
 const ItemContainer = Styled.TouchableOpacity`
   margin: 2px;

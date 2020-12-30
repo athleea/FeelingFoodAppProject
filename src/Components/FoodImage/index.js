@@ -5,7 +5,7 @@ import Styled from 'styled-components/native'
 const textColor = "#28292b"
 
 const Container = Styled.View`
-    margin: 10px;
+    margin: 5px;
     align-items: center
 `
 const ImageView = Styled.TouchableOpacity`

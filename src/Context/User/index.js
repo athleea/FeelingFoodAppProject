@@ -3,6 +3,7 @@ import { Alert } from 'react-native'
 
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultContext = {
     latitude: 37.507390607185336,
@@ -18,6 +19,7 @@ const UserContextProvider = ({ children }) => {
 
     const [location, setLocation] = useState({});
     const [isLoaded, setIsLoaded] = useState(true);
+    const [firstUser, setFirstUser] = useState(true);
 
     const requestPermission = async () => {
         try {
@@ -132,14 +134,26 @@ const UserContextProvider = ({ children }) => {
             Alert.alert(message);
         }, 500);
     };
+    const checkFirstUser = async () => {
+        await AsyncStorage.getItem('user').then(value => {
+            if (value) setFirstUser(false);
+        })
+            .catch(() => {
+                setFirstUser(true);
+            });
+    }
 
     useEffect(() => {
+        checkFirstUser();
         setCurrentLocation();
     }, []);
 
     return (
         <UserContext.Provider
             value={{
+                firstUser,
+                setCurrentLocation,
+                setFirstUser,
                 location,
                 isLoaded,
             }}>
