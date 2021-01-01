@@ -44,9 +44,11 @@ const Map = ({ navigation, route }) => {
 
   const { location } = useContext(UserContext)
 
-  const [data, setData] = useState({
+  const [region, setRegion] = useState({
     latitude: location.latitude,
-    longitude: location.longitude
+    longitude: location.longitude,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   })
   const [marker, setMarker] = useState([])
   const [query, setQuery] = useState()
@@ -60,7 +62,7 @@ const Map = ({ navigation, route }) => {
   const initMarker = () => {
     fetch(
       //x = 126.87669615985372 y = 37.507390607185336
-      `${URL}&x=${data.longitude}&y=${data.latitude}&radius=${radius}&query=${query}`, {
+      `${URL}&x=${region.longitude}&y=${region.latitude}&radius=${radius}&query=${query}`, {
       method: 'GET',
       headers: {
         Authorization: `KakaoAK ${API_KEY}`
@@ -89,7 +91,7 @@ const Map = ({ navigation, route }) => {
   }, [])
 
   useEffect(() => {
-    if(route.params.name){
+    if (route.params.name) {
       setQuery(route.params.name)
     }
     initMarker();
@@ -116,51 +118,52 @@ const Map = ({ navigation, route }) => {
       />
     )
   }
-
+  let mapview;
   return (
     <Container>
       <MapView
+        ref={map => mapview = map}
+        style={{ flex: 1 }}
+        provider={PROVIDER_GOOGLE}
+        paddingAdjustmentBehavior={'always'}
+        initialRegion={region}
         showsUserLocation={true}
         showsMyLocationButton={true}
         followsUserLocation={true}
-        style={{ flex: 1 }}
-        provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: data.latitude,
-          longitude: data.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
+
         onRegionChange={() => {
           setMove(true)
         }}
         onRegionChangeComplete={region => {
-          setData({
+          setRegion({
             latitude: region.latitude,
             longitude: region.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           });
-          setMove(false)
+          setMove(false);
         }}
       >
         <Circle
           strokeWidth={0.5}
           fillColor={'rgba(160,255,0,0.2)'}
           center={{
-            latitude: data.latitude,
-            longitude: data.longitude,
+            latitude: region.latitude,
+            longitude: region.longitude,
           }}
           radius={radius}
         />
 
-        {marker ? marker.map((val) => {
-          let lat = parseFloat(val.y)
-          let lon = parseFloat(val.x)
+        {marker ? 
+          marker.map( element => {
+            let lat = parseFloat(element.y);
+            let lon = parseFloat(element.x);
             return (
               <Marker
-                pinColor={'blue'}
-                key={val.id}
+                pinColor={'#28292b'}
+                key={element.id}
                 coordinate={{ latitude: lat, longitude: lon }}
-                title={val.place_name} />
+                title={element.place_name} />
             )
           }) : <></>
         }
@@ -174,7 +177,6 @@ const Map = ({ navigation, route }) => {
         }}
         renderItem={renderItem}
       />
-
       {move ? <></> :
         <Research onPress={initMarker}>
           <ResearchText>현위치 검색</ResearchText>
@@ -196,7 +198,7 @@ const Map = ({ navigation, route }) => {
           setQuery(itemValue)
           initMarker()
         }
-          
+
         }>
         {food.map((value, index) => {
           return (
@@ -222,29 +224,29 @@ const Map = ({ navigation, route }) => {
         onValueChange={(itemValue, itemIndex) =>
           setRadius(itemValue)
         }>
-          <Picker.Item label={'1km'} value={1000} />
-          <Picker.Item label={'1.5km'} value={1500} />
-          <Picker.Item label={'2km'} value={2000} />
+        <Picker.Item label={'1km'} value={1000} />
+        <Picker.Item label={'1.5km'} value={1500} />
+        <Picker.Item label={'2km'} value={2000} />
       </Picker>
 
-      <Icon name="my-location" size={40} color="#aa0000" style={{
+      <Icon name="my-location" size={40} color="#28292b" style={{
         position: 'absolute',
         alignSelf: 'flex-end',
         bottom: 30,
         right: 30,
+        backgroundColor: '#ffffff',
+        borderRadius: 25
       }}
-        onPress={()=>{
-          setData({
+        onPress={() => {
+          mapview.animateToRegion({
             latitude: location.latitude,
-            longitude: location.longitude
-          })
+            longitude: location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
         }}
       />
-
-
     </Container>
-  )
+  );
 }
-
-
 export default Map

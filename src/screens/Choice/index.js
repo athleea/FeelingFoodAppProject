@@ -53,16 +53,18 @@ const Label = Styled.Text`
 const Choice = ({ }) => {
 
     const { firstUser, setFirstUser } = useContext(UserContext);
-    let mount = true;
+    
     const [data, setData] = useState({
         food: undefined,
         tag: undefined
     });
     const [mainTag, setMainTag] = useState("");
     const [mainFood, setMainFood] = useState([]);
-    const [count, setCount] = useState(0)
+    const [count, setCount] = useState(0);
 
     let category = '';
+    let mount = true;
+
     const getRandomNumber = (obj) => {
         let num = [0, 0, 0, 0];
         for (let i = 0; i < num.length; i++) {
@@ -115,6 +117,7 @@ const Choice = ({ }) => {
 
     }
 
+    
     useEffect(() => {
         initData();
         setTimeout(() => {
@@ -131,7 +134,7 @@ const Choice = ({ }) => {
                 food={item}
                 onPress={() => {
                     saveData(item.id).then(async () => {
-                        if (firstUser && count >= 5) {
+                        if (firstUser && count >= 4) {
                             await AsyncStorage.setItem('user', 'true');
                             setFirstUser(false);
                         } else {

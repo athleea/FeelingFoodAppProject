@@ -9,6 +9,7 @@ import database from '@react-native-firebase/database';
 import Styled from 'styled-components/native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SplashScreen from 'react-native-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Container = Styled.ScrollView`
   flex: 1;
@@ -29,13 +30,33 @@ const Home = ({ navigation }) => {
   const [randomFood, setRandomFood] = useState({})
   const [refreshing, setRefreshing] = useState(false);
 
-  const initRandomMainFood = () => {
-    database().ref(`/Food`).once('value', snapshot => {
-      let length = Object.keys(snapshot.val()).length
-      let index = Math.floor(Math.random() * length)
-      setRandomFood(snapshot.val()[index]);
+  const getExcludeFood = async(array) => {
+    await AsyncStorage.getItem('food', (error, result) => {
+      if(result){
+        const excludeFood = JSON.parse(result);
+        
+        excludeFood.forEach(element => {
+          const itemIndex = array.findIndex( item => { return item.name === element})
+          if(itemIndex > -1) array.splice(itemIndex, 1);
+        });
+
+        let index = Math.floor(Math.random() * array.length);
+        console.log(array[index]);
+        setRandomFood(array[index]);
+      }else{
+        let index = Math.floor(Math.random() * array.length);
+        setRandomFood(array[index]);
+      }
     });
   }
+
+  const initRandomMainFood = () => {
+    database().ref(`/Food`).once('value', snapshot => {
+      const food = snapshot.val();
+      getExcludeFood(food);
+    });
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -46,14 +67,15 @@ const Home = ({ navigation }) => {
           <Icon name="cog" size={25} color="#ffffff" />
         </SettingButton>
       )
-    })
+    });
   }, []);
 
   useEffect(() => {
+    initRandomMainFood();
     setTimeout(()=>{
       SplashScreen.hide();
   }, 1500);
-    initRandomMainFood();
+  
   }, []);
 
   const wait = (timeout) => {
