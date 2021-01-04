@@ -57,11 +57,11 @@ const Map = ({ navigation, route }) => {
   const [move, setMove] = useState(true)
   const [food, setFood] = useState([]);
 
+  let mapview, flatlist;
 
 
   const initMarker = () => {
     fetch(
-      //x = 126.87669615985372 y = 37.507390607185336
       `${URL}&x=${region.longitude}&y=${region.latitude}&radius=${radius}&query=${query}`, {
       method: 'GET',
       headers: {
@@ -70,8 +70,8 @@ const Map = ({ navigation, route }) => {
     })
       .then(response => response.json())
       .then(json => {
-        setMarker(json.documents)
-        setIsFocus(true)
+        setMarker(json.documents);
+        setIsFocus(true);
       })
       .catch(error => {
         console.log(error);
@@ -118,7 +118,7 @@ const Map = ({ navigation, route }) => {
       />
     )
   }
-  let mapview;
+  
   return (
     <Container>
       <MapView
@@ -138,8 +138,8 @@ const Map = ({ navigation, route }) => {
           setRegion({
             latitude: region.latitude,
             longitude: region.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04,
           });
           setMove(false);
         }}
@@ -154,8 +154,8 @@ const Map = ({ navigation, route }) => {
           radius={radius}
         />
 
-        {marker ? 
-          marker.map( element => {
+        {marker ?
+          marker.map(element => {
             let lat = parseFloat(element.y);
             let lon = parseFloat(element.x);
             return (
@@ -168,20 +168,6 @@ const Map = ({ navigation, route }) => {
           }) : <></>
         }
       </MapView>
-      <RestaurantList
-        horizontal={true}
-        pagingEnabled={true}
-        data={marker}
-        keyExtractor={(item, index) => {
-          return `item-${index}`;
-        }}
-        renderItem={renderItem}
-      />
-      {move ? <></> :
-        <Research onPress={initMarker}>
-          <ResearchText>현위치 검색</ResearchText>
-        </Research>
-      }
       <Picker
         selectedValue={query}
         style={{
@@ -194,9 +180,9 @@ const Map = ({ navigation, route }) => {
         }}
 
         onValueChange={(itemValue, itemIndex) => {
-          route.params.name = itemValue
-          setQuery(itemValue)
-          initMarker()
+          setQuery(itemValue);
+          initMarker();
+          flatlist.scrollToIndex({animated: true, index: 0});
         }
 
         }>
@@ -204,9 +190,28 @@ const Map = ({ navigation, route }) => {
           return (
             <Picker.Item key={index} label={value} value={value} />
           )
-        })}
+        })
+        }
       </Picker>
-
+      <RestaurantList
+        ref={element => flatlist = element}
+        initialScrollIndex={0}
+        horizontal={true}
+        pagingEnabled={true}
+        data={marker}
+        keyExtractor={(item, index) => {
+          return `item-${index}`;
+        }}
+        renderItem={renderItem}
+      />
+      {move ? <></> :
+        <Research onPress={()=>{
+          initMarker();
+          flatlist.scrollToIndex({animated: true, index: 0});
+        }}>
+          <ResearchText>현위치 검색</ResearchText>
+        </Research>
+      }
       <Picker
         mode='dropdown'
         selectedValue={radius}
@@ -241,8 +246,8 @@ const Map = ({ navigation, route }) => {
           mapview.animateToRegion({
             latitude: location.latitude,
             longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04,
           });
         }}
       />

@@ -6,18 +6,23 @@ import { PermissionsAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultContext = {
-    latitude: 37.507390607185336,
-    longitude: 126.87669615985372
+    location: {},
+    tagInfo: {},
+    isLoaded : undefined,
+    firstUser : undefined,
 };
 
 const API_KEY = '6b3df92331ad3dd3d5e970ffe1382aa5'
 
 const UserContext = createContext(defaultContext);
 
-
 const UserContextProvider = ({ children }) => {
 
-    const [location, setLocation] = useState({});
+    const [location, setLocation] = useState({
+        latitude: 37.5642135,
+        longitude: 127.0016985
+    });
+    const [tagInfo, setTagInfo] = useState({});
     const [isLoaded, setIsLoaded] = useState(true);
     const [firstUser, setFirstUser] = useState(true);
 
@@ -38,49 +43,41 @@ const UserContextProvider = ({ children }) => {
             if (result === "granted") {
                 Geolocation.getCurrentPosition(
                     position => {
-                        console.log(position)
                         const { latitude, longitude } = position.coords;
-                        setCurrentWeather(latitude, longitude);
+                        setLocation({latitude: latitude, longitude: longitude});
                     },
                     error => {
-                        console.log(error)
-                        setIsLoaded(false)
-                        showError('위치 정보를 가져오는데에 실패 했습니다');
+                        console.log(error);
+                        showError(`위치 정보를 가져오는데에 실패 했습니다.`);
                     }
                 );
             } else {
-                setIsLoaded(false)
-                showError('위치 정보를 가져오는데에 실패');
+                setIsLoaded(false);
+                showError('위치 정보를 가져오는데에 실패 했습니다');
             }
-        })
+        });
     };
-    const setCurrentWeather = (lat, lon) => {
-        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`)
+    const setCurrentWeather = () => {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=${API_KEY}&units=metric`)
             .then(response => response.json())
             .then(json => {
-                console.log(json)
-                setLocation({
-                    latitude: lat,
-                    longitude: lon,
+                console.log(json);
+                setIsLoaded(true);
+                setTagInfo({
                     icon: json.weather[0].icon,
                     weather: getWeatherText(json.weather[0].icon),
-                    season: getSeason(),
-                });
-                setIsLoaded(true)
-
-            })
-            .catch(error => {
-                showError('날씨 정보를 가져오는데에 실패');
-                setLocation({
-                    latitude: lat,
-                    longitude: lon,
-                    isLoaded: false,
-                    icon: undefined,
-                    weather: undefined,
                     season: getSeason()
                 });
+            })
+            .catch(error => {
                 console.log(error);
-                setIsLoaded(false)
+                setIsLoaded(false);
+                setTagInfo({
+                    icon: '01d',
+                    weather: '맑음',
+                    season: getSeason()
+                });
+                showError('날씨 정보를 가져오는데에 실패 했습니다.');
             });
     };
     const getWeatherText = (icon) => {
@@ -153,6 +150,9 @@ const UserContextProvider = ({ children }) => {
             value={{
                 firstUser,
                 setCurrentLocation,
+                tagInfo,
+                setTagInfo,
+                setCurrentWeather,
                 setFirstUser,
                 location,
                 isLoaded,

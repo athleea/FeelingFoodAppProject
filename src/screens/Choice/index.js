@@ -20,6 +20,7 @@ const FoodContainer = Styled.FlatList`
 `;
 const HeaderView = Styled.View`
     width: 100%
+    flex: 1;
     flexDirection: row;
     margin: 10px;
     align-items: center;

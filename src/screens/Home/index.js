@@ -24,8 +24,7 @@ const CategoryContainer = Styled.View`
 
 const Home = ({ navigation }) => {
 
-  const { location, isLoaded } = useContext(UserContext)
-  const { weather, icon, season } = location
+  const { tagInfo, isLoaded, setCurrentWeather } = useContext(UserContext)
 
   const [randomFood, setRandomFood] = useState({})
   const [refreshing, setRefreshing] = useState(false);
@@ -71,6 +70,7 @@ const Home = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    setCurrentWeather();
     initRandomMainFood();
     setTimeout(()=>{
       SplashScreen.hide();
@@ -111,16 +111,16 @@ const Home = ({ navigation }) => {
       <CategoryContainer>
         <FoodImageList
           category="Weather"
-          tag={weather}
-          tagPress={() => { navigation.navigate('Chart', { tag: weather, category: 'Weather' }); }}
+          tag={tagInfo.weather}
+          tagPress={() => { navigation.navigate('Chart', { tag: tagInfo.weather, category: 'Weather' }); }}
           onPress={food => { navigation.navigate('StackMap', { screen: 'Map', params: { name: food.name } }); }}
           isLoaded={isLoaded}
-          icon={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+          icon={`http://openweathermap.org/img/wn/${tagInfo.icon}@2x.png`}
         />
         <FoodImageList
           category="Anniversary"
-          tag={season}
-          tagPress={() => { navigation.navigate('Chart', { tag: season, category: 'Anniversary' }); }}
+          tag={tagInfo.season}
+          tagPress={() => { navigation.navigate('Chart', { tag: tagInfo.season, category: 'Anniversary' }); }}
           onPress={food => { navigation.navigate('StackMap', { screen: 'Map', params: { name: food.name } }); }}
           isLoaded={true}
         />
