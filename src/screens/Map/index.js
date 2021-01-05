@@ -23,16 +23,13 @@ const RestaurantList = Styled.FlatList`
 `
 const Research = Styled.TouchableOpacity`
   position: absolute;
-  alignSelf: center;
-  bottom: 5%
-  width: 100px;
+  left: 40%;
+  bottom: 20px;
   backgroundColor: #28292b;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
+  border-radius: 20px;
 `
 const ResearchText = Styled.Text`
-  padding : 5px;
+  padding : 10px;
   color: white;
   font-size: 15px;
 `
@@ -58,7 +55,6 @@ const Map = ({ navigation, route }) => {
   const [food, setFood] = useState([]);
 
   let mapview, flatlist;
-
 
   const initMarker = () => {
     fetch(
@@ -130,7 +126,6 @@ const Map = ({ navigation, route }) => {
         showsUserLocation={true}
         showsMyLocationButton={true}
         followsUserLocation={true}
-
         onRegionChange={() => {
           setMove(true)
         }}
@@ -142,8 +137,7 @@ const Map = ({ navigation, route }) => {
             longitudeDelta: 0.04,
           });
           setMove(false);
-        }}
-      >
+        }}>
         <Circle
           strokeWidth={0.5}
           fillColor={'rgba(160,255,0,0.2)'}
@@ -151,9 +145,7 @@ const Map = ({ navigation, route }) => {
             latitude: region.latitude,
             longitude: region.longitude,
           }}
-          radius={radius}
-        />
-
+          radius={radius}/>
         {marker ?
           marker.map(element => {
             let lat = parseFloat(element.y);
@@ -168,6 +160,7 @@ const Map = ({ navigation, route }) => {
           }) : <></>
         }
       </MapView>
+
       <Picker
         selectedValue={query}
         style={{
@@ -178,21 +171,19 @@ const Map = ({ navigation, route }) => {
           height: 40,
           color: 'white',
         }}
-
         onValueChange={(itemValue, itemIndex) => {
           setQuery(itemValue);
           initMarker();
           flatlist.scrollToIndex({animated: true, index: 0});
-        }
-
-        }>
-        {food.map((value, index) => {
-          return (
-            <Picker.Item key={index} label={value} value={value} />
-          )
-        })
-        }
+        }}>
+          {food.map((value, index) => {
+            return (
+              <Picker.Item key={index} label={value} value={value} />
+            )
+            })
+          }
       </Picker>
+      
       <RestaurantList
         ref={element => flatlist = element}
         initialScrollIndex={0}
@@ -204,24 +195,16 @@ const Map = ({ navigation, route }) => {
         }}
         renderItem={renderItem}
       />
-      {move ? <></> :
-        <Research onPress={()=>{
-          initMarker();
-          flatlist.scrollToIndex({animated: true, index: 0});
-        }}>
-          <ResearchText>현위치 검색</ResearchText>
-        </Research>
-      }
       <Picker
         mode='dropdown'
         selectedValue={radius}
         style={{
           backgroundColor: 'rgba(20,20,20,0.5)',
-          bottom: 30,
+          bottom: 20,
           left: 10,
           position: 'absolute',
           alignSelf: 'flex-start',
-          width: 110,
+          width: 100,
           height: 35,
           color: 'white',
           borderRadius: 50,
@@ -234,14 +217,27 @@ const Map = ({ navigation, route }) => {
         <Picker.Item label={'2km'} value={2000} />
       </Picker>
 
-      <Icon name="my-location" size={40} color="#28292b" style={{
-        position: 'absolute',
-        alignSelf: 'flex-end',
-        bottom: 30,
-        right: 30,
-        backgroundColor: '#ffffff',
-        borderRadius: 25
-      }}
+      {move ? <></> :
+        <Research onPress={()=>{
+          initMarker();
+          flatlist.scrollToIndex({animated: true, index: 0});
+        }}>
+          <ResearchText>현위치 검색</ResearchText>
+        </Research>
+      }
+      
+      <Icon
+        name="my-location"
+        size={40}
+        color="#28292b"
+        style={{
+          position: 'absolute',
+          alignSelf: 'flex-end',
+          bottom: 20,
+          right: 10,
+          backgroundColor: '#ffffff',
+          borderRadius: 25
+        }}
         onPress={() => {
           mapview.animateToRegion({
             latitude: location.latitude,
