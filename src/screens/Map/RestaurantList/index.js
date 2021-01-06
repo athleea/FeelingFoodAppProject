@@ -7,7 +7,7 @@ const Container = Styled.TouchableOpacity`
     align-items: center;
 `
 const RestaurantName = Styled.Text`
-    color: #ffffff;
+    color: black;
     font-size: 20px;
     font-weight: bold;
 `

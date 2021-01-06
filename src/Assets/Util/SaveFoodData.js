@@ -4,7 +4,7 @@ import { exp } from 'react-native-reanimated';
 
 const catagori = ["KFood","Stew","CFood","JFood","WFood","Snack","Noodle","Etc"]
 const foodName = {
-                0 : ["갈비구이","게장","곱창","김치볶음밥","껍데기","닭갈비","닭발","떡갈비","보쌈","불고기",
+                0 : ["갈비","게장","곱창","김치볶음밥","껍데기","닭갈비","닭발","떡갈비","보쌈","불고기",
                       "비빔밥","삼겹살","생선구이","수제비","오징어볶음","육회","전","제육볶음","족발","죽",
                       "찜닭","조개구이"],
                 1 : ["김치찌개","설렁탕","떡국","갈비찜","순두부찌개","닭도리탕","매운탕","삼계탕","감자탕","뼈해장국",
@@ -49,21 +49,11 @@ const tag = [ ["기쁠때","슬플때","화날때","지루할때","놀랐을때"
 const saveTagData = () => {
   for(let i=0;i<tagCatagori.length;i++){
     for(let j=0;j<tag[i].length;j++){
-      database().ref(`/Tag/${tagCatagori[i]}/${tag[i][j]}`).set({
-          0 : 1,
-          11 : 1,
-          22 : 1,
-          33 : 1,
-          44 : 1,
-          55 : 1,
-          66 : 1,
-          77 : 1,
-          88 : 1,
-          19 : 1,
-          20 : 1,
-          31 : 1,
-          42 : 1,
-          53 : 1,
+      database().ref(`/Tag/${tag[i][j]}`).set({
+        category: tagCatagori[i],
+        like : {
+          0 : 0,
+        },
       }).then( ()=> console.log("Data set"));
     }
   }

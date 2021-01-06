@@ -35,28 +35,7 @@ const StackHome = () => {
                         borderBottomWidth: 0
                     },
                 }} />
-            <Stack.Screen
-                name="Setting"
-                component={Setting}
-                options={{
-                    title: '설정',
-                    headerTintColor: BarTitleColor,
-                    headerStyle: {
-                        backgroundColor: BarColor,
-                        borderBottomWidth: 0
-                    },
-                }} />
-            <Stack.Screen
-                name="Chart"
-                component={Chart}
-                options={{
-                    title: '순위',
-                    headerTintColor: BarTitleColor,
-                    headerStyle: {
-                        backgroundColor: BarColor,
-                        borderBottomWidth: 0
-                    },
-                }} />
+            
         </Stack.Navigator>
     )
 }
@@ -98,16 +77,7 @@ const StackMap = () => {
                 component={Map}
                 initialParams={{ name: '돈까스' }}
                 options={{ headerShown: false }} />
-            <Stack.Screen
-                name="WebView"
-                component={FoodWebView}
-                options={{
-                    title: '',
-                    headerTintColor: '#ffffff',
-                    headerStyle: {
-                        backgroundColor: BarColor,
-                    },
-                }} />
+            
         </Stack.Navigator>
     )
 }
@@ -168,8 +138,6 @@ const MainNavigator = () => {
                             : <Icon name="map" size={20} color="#111111" />
                     )
                 }}
-
-
             />
             <BottomTab.Screen
                 name="StackChoice"
@@ -186,13 +154,48 @@ const MainNavigator = () => {
     )
 }
 
+const MainStackNavigator = () => {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen
+                name="MainNavigator"
+                component={MainNavigator}
+                options={{
+                    headerShown: false
+                }}
+                />
+            <Stack.Screen
+                name="Setting"
+                component={Setting}
+                options={{
+                    title: '설정',
+                    headerTintColor: BarTitleColor,
+                    headerStyle: {
+                        backgroundColor: BarColor,
+                        borderBottomWidth: 0
+                    },
+                }} />
+            <Stack.Screen
+                name="WebView"
+                component={FoodWebView}
+                options={{
+                    title: '',
+                    headerTintColor: '#ffffff',
+                    headerStyle: {
+                        backgroundColor: BarColor,
+                    },
+                }} />
+        </Stack.Navigator>
+    )
+}
+
 export default () => {
 
     const { firstUser } = useContext(UserContext);
 
     return (
         <NavigationContainer>
-            {firstUser ? <StackChoice /> : <MainNavigator />}
+            {firstUser ? <StackChoice /> : <MainStackNavigator />}
         </NavigationContainer>
     )
 }

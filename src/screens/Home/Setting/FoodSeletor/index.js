@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react'
+import React, { useState, useEffect} from 'react'
 
 import database from '@react-native-firebase/database'
 import MultiSelect from 'react-native-multiple-select';
@@ -8,12 +8,11 @@ const FootSelector = () => {
 
     const [selectedItems, setSelectedItems] = useState([]);
     const [foodData, setFoodData] = useState([]);
-    
 
     const initFoodData = () => {
         database().ref('/Food').once('value', snapshot => {
-            let data = snapshot.val()
-            setFoodData(data)
+            let data = snapshot.val();
+            setFoodData(data);
         });
     }
     const initExcludeFood = async() => {
@@ -24,6 +23,7 @@ const FootSelector = () => {
             }
             
         });
+        
     }
     const saveExcludeFood = async(items) => {
         await AsyncStorage.setItem('food', JSON.stringify(items));
@@ -35,20 +35,18 @@ const FootSelector = () => {
     }
 
     useEffect(() => {
-        initExcludeFood();
         initFoodData();
+        // initExcludeFood();
     }, [])
 
     return (
         <MultiSelect
-            styleMainWrapper={{margin: 5}}
             items={foodData}
             uniqueKey="name"
             onSelectedItemsChange={onSelectedItemsChange}
             selectedItems={selectedItems}
             selectText="음식 선택"
             searchInputPlaceholderText="음식 이름 검색"
-            onChangeInput={ (text)=> console.log(text)}
             altFontFamily="ProximaNova-Light"
             tagRemoveIconColor="#28292b"
             tagBorderColor="#28292b"
@@ -60,7 +58,7 @@ const FootSelector = () => {
             searchInputStyle={{ color: '#28292b' }}
             submitButtonColor="#28292b"
             submitButtonText="제외"
-        />   
+        />
     )
 }
 

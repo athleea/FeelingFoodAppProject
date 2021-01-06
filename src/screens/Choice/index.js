@@ -20,7 +20,7 @@ const FoodContainer = Styled.FlatList`
 `;
 const HeaderView = Styled.View`
     width: 100%
-    flex: 1;
+    flex: 0.6;
     flexDirection: row;
     margin: 10px;
     align-items: center;
@@ -51,7 +51,7 @@ const Label = Styled.Text`
     padding: 5px;
 `
 
-const Choice = ({ }) => {
+const Choice = () => {
 
     const { firstUser, setFirstUser } = useContext(UserContext);
     
@@ -63,7 +63,6 @@ const Choice = ({ }) => {
     const [mainFood, setMainFood] = useState([]);
     const [count, setCount] = useState(0);
 
-    let category = '';
     let mount = true;
 
     const getRandomNumber = (obj) => {
@@ -80,35 +79,30 @@ const Choice = ({ }) => {
         return num
     }
     const initData = () => {
-        database().ref('/').once('value')
-            .then(snapshot => {
-                if (mount) {
-                    setData({
-                        tag: snapshot.val()['Tag'],
-                        food: snapshot.val()['Food']
-                    });
-                    randomData(snapshot.val()['Tag'], snapshot.val()['Food']);
-                }
-            });
+        database().ref('/').once('value').then(snapshot => {
+            if (mount) {
+                setData({
+                    tag: snapshot.val()['Tag'],
+                    food: snapshot.val()['Food']
+                });
+                randomData(snapshot.val()['Tag'], snapshot.val()['Food']);
+            }
+        });
     }
     const randomData = (tag, food) => {
-
-        const tagCategory = ["Weather", "Emotion", "Anniversary"];
-        category = tagCategory[Math.floor(Math.random() * tagCategory.length)];
-
         let array = [];
-        let key = Object.keys(tag[category]);
+        let key =  Object.keys(tag);
         let num = getRandomNumber(food);
         num.forEach(index => {
             array.push(food[index]);
         });
         setMainTag(key[Math.floor(Math.random() * key.length)]);
         setMainFood(array);
-
     }
+
     const saveData = async (id) => {
-        const reference = database().ref(`/Tag/${category}/${mainTag}/${id}`);
         setCount(count + 1);
+        const reference = database().ref(`/Tag/${mainTag}/like/${id}`);
         return await reference.transaction(currentLikes => {
             if (currentLikes === null) {
                 return 1;
@@ -118,7 +112,6 @@ const Choice = ({ }) => {
 
     }
 
-    
     useEffect(() => {
         initData();
         setTimeout(() => {

@@ -2,10 +2,11 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import Styled from 'styled-components/native'
 import { FlatList } from 'react-native'
 
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import database from '@react-native-firebase/database'
+import Banner from '~/Components/Banner'
 
 const textColor = "#28292b"
-
 
 const Container = Styled.SafeAreaView`
   backgroundColor: #eee
@@ -23,6 +24,7 @@ const LankText = Styled.Text`
   color: ${textColor}
 `
 const FoodLabel = Styled.View`
+  align-items: center
   flex:4;
 `
 const FootImage = Styled.Image`
@@ -35,50 +37,56 @@ const FoodName = Styled.Text`
   font-weight: bold;
   color: ${textColor}
 `
+const LikeView = Styled.View`
+  flexDirection: row
+  align-items: center;
+  justify-content: center;
+`
 const LikeCount = Styled.Text`
   text-align: center;
   font-size: 17px;
   color: ${textColor}
 `
+
 const Chart = ({ navigation, route }) => {
 
   const [data, setData] = useState({
     tag: route.params.tag,
-    category: route.params.category,
     foodlist: [],
     like: [],
   })
 
   const initData = () => {
-    let key = [];
+
+    let foodId = [];
     let food = [];
     let likeCount = [];
-    database().ref(`Tag/${data.category}/${data.tag}`).orderByValue().once('value', snapshot => {
-      snapshot.forEach((value) => {
-        key.push(value.key)
-        likeCount.push(value)
+
+    database().ref(`Tag/${data.tag}/like`).orderByValue().once('value', snapshot => {
+      snapshot.forEach(element => {
+        foodId.push(element.key)
+        likeCount.push(element)
       })
-      key.reverse();
+      foodId.reverse();
       likeCount.reverse();
-    })
-      .then(() => {
-        database().ref(`Food/`).once('value', snapshot => {
-          key.forEach((val, index) => {
-            let temp = JSON.stringify(likeCount[index])
-            food.push(Object.assign(snapshot.child(val).val(), { like: temp }))
-          });
-          setData({ foodlist: food });
+    }).then(() => {
+      database().ref(`Food/`).once('value', snapshot => {
+        foodId.forEach((val, index) => {
+          let like = JSON.stringify(likeCount[index])
+          food.push(Object.assign(snapshot.child(val).val(), { like: like }))
         });
-      })
+        setData({ foodlist: food });
+      });
+    })
   }
 
   useEffect(() => {
     initData();
   }, [])
 
-  useLayoutEffect(()=>{
-    navigation.setOptions({ headerTitle: `#${route.params.tag }`});
-  },[])
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerTitle: `#${route.params.tag}` });
+  }, [])
 
   const renderItem = ({ item, index }) => {
     return (
@@ -98,13 +106,17 @@ const Chart = ({ navigation, route }) => {
         />
         <FoodLabel>
           <FoodName>{item.name}</FoodName>
-          <LikeCount>♥ {item.like}</LikeCount>
+          <LikeView>
+            <Icon name="favorite" size={20} color={'#e6212a'}/>
+            <LikeCount> {item.like}</LikeCount>
+          </LikeView>
         </FoodLabel>
       </ItemContainer>
     )
   }
   return (
     <Container>
+      <Banner />
       <FlatList
         data={data.foodlist}
         keyExtractor={(item, index) => {

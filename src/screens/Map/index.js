@@ -23,7 +23,7 @@ const RestaurantList = Styled.FlatList`
 `
 const Research = Styled.TouchableOpacity`
   position: absolute;
-  left: 40%;
+  alignSelf: center
   bottom: 20px;
   backgroundColor: #28292b;
   border-radius: 20px;
@@ -48,7 +48,6 @@ const Map = ({ navigation, route }) => {
     longitudeDelta: 0.0421,
   })
   const [marker, setMarker] = useState([])
-  const [query, setQuery] = useState()
   const [isFocus, setIsFocus] = useState(false)
   const [radius, setRadius] = useState(1000)
   const [move, setMove] = useState(true)
@@ -56,26 +55,26 @@ const Map = ({ navigation, route }) => {
 
   let mapview, flatlist;
 
-  const initMarker = () => {
+  const getRestaurantList = (food) => {
+    route.params.name = food;
+    setIsFocus(true);
     fetch(
-      `${URL}&x=${region.longitude}&y=${region.latitude}&radius=${radius}&query=${query}`, {
+      `${URL}&x=${region.longitude}&y=${region.latitude}&radius=${radius}&query=${food}`, {
       method: 'GET',
       headers: {
         Authorization: `KakaoAK ${API_KEY}`
       }
     })
-      .then(response => response.json())
-      .then(json => {
-        setMarker(json.documents);
-        setIsFocus(true);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    .then(response => response.json())
+    .then(json => {
+      setMarker(json.documents);
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
-  useEffect(() => {
-    setQuery(route.params.name)
+  const initDropdownList = () => {
     database().ref('/Food/').once('value', snapshot => {
       let list = [];
       let value = snapshot.val()
@@ -83,26 +82,24 @@ const Map = ({ navigation, route }) => {
         list.push(e.name)
       })
       setFood(list)
-    })
-  }, [])
+    });
+  }
 
   useEffect(() => {
-    if (route.params.name) {
-      setQuery(route.params.name)
-    }
-    initMarker();
-  }, [isFocus])
-
+    initDropdownList();
+    getRestaurantList(route.params.name);
+  }, []);
 
   useEffect(() => {
-    initMarker();
-  }, [query])
+    getRestaurantList(route.params.name);
+  }, [isFocus]);
 
   useFocusEffect(
     useCallback(() => {
-      return setIsFocus(false)
+      return setIsFocus(false);
     }, [])
-  )
+  );
+
   const renderItem = ({ item }) => {
     return (
       <Restaurant
@@ -110,15 +107,21 @@ const Map = ({ navigation, route }) => {
         category={item.category_name}
         address={item.address_name}
         phone={item.phone}
-        onPress={() => { navigation.navigate('WebView', { url: item.place_url }) }}
+        onPress={ () => {
+          navigation.navigate('WebView', { url: item.place_url });
+        }}
       />
     )
   }
-  
+  const scorllToFirst = () => {
+    if(marker.length > 0){
+      flatlist.scrollToIndex({animated: true, index: 0});
+    }
+  }
   return (
     <Container>
       <MapView
-        ref={map => mapview = map}
+        ref={ref => mapview = ref}
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
         paddingAdjustmentBehavior={'always'}
@@ -147,11 +150,14 @@ const Map = ({ navigation, route }) => {
           }}
           radius={radius}/>
         {marker ?
-          marker.map(element => {
+          marker.map((element, index) => {
             let lat = parseFloat(element.y);
             let lon = parseFloat(element.x);
             return (
               <Marker
+                onPress={()=>{
+                  flatlist.scrollToIndex({animated: true, index: index});
+                }}
                 pinColor={'#28292b'}
                 key={element.id}
                 coordinate={{ latitude: lat, longitude: lon }}
@@ -162,7 +168,7 @@ const Map = ({ navigation, route }) => {
       </MapView>
 
       <Picker
-        selectedValue={query}
+        selectedValue={route.params.name}
         style={{
           backgroundColor: '#28292b',
           top: 0,
@@ -172,9 +178,8 @@ const Map = ({ navigation, route }) => {
           color: 'white',
         }}
         onValueChange={(itemValue, itemIndex) => {
-          setQuery(itemValue);
-          initMarker();
-          flatlist.scrollToIndex({animated: true, index: 0});
+          getRestaurantList(itemValue);
+          scorllToFirst();
         }}>
           {food.map((value, index) => {
             return (
@@ -186,12 +191,11 @@ const Map = ({ navigation, route }) => {
       
       <RestaurantList
         ref={element => flatlist = element}
-        initialScrollIndex={0}
         horizontal={true}
         pagingEnabled={true}
         data={marker}
         keyExtractor={(item, index) => {
-          return `item-${index}`;
+          return `${item.place_name}`;
         }}
         renderItem={renderItem}
       />
@@ -219,8 +223,8 @@ const Map = ({ navigation, route }) => {
 
       {move ? <></> :
         <Research onPress={()=>{
-          initMarker();
-          flatlist.scrollToIndex({animated: true, index: 0});
+          getRestaurantList(route.params.name);
+          scorllToFirst();
         }}>
           <ResearchText>현위치 검색</ResearchText>
         </Research>
@@ -228,15 +232,16 @@ const Map = ({ navigation, route }) => {
       
       <Icon
         name="my-location"
-        size={40}
-        color="#28292b"
+        size={30}
+        color="#fff"
         style={{
           position: 'absolute',
           alignSelf: 'flex-end',
           bottom: 20,
           right: 10,
-          backgroundColor: '#ffffff',
-          borderRadius: 25
+          backgroundColor: '#28292b',
+          borderRadius: 25,
+          padding: 5
         }}
         onPress={() => {
           mapview.animateToRegion({

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
-import { Dimensions, RefreshControl } from 'react-native'
+import { Dimensions, RefreshControl, Platform} from 'react-native'
 
 import FoodImageList from './FoodImageList'
 import FoodImage from '~/Components/FoodImage'
@@ -10,6 +10,7 @@ import Styled from 'styled-components/native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Banner from '../../Components/Banner';
 
 const Container = Styled.ScrollView`
   flex: 1;
@@ -28,6 +29,7 @@ const Home = ({ navigation }) => {
 
   const [randomFood, setRandomFood] = useState({})
   const [refreshing, setRefreshing] = useState(false);
+
 
   const getExcludeFood = async(array) => {
     await AsyncStorage.getItem('food', (error, result) => {
@@ -102,12 +104,10 @@ const Home = ({ navigation }) => {
         fontsize={30}
         food={randomFood}
         onPress={() => {
-          navigation.navigate('StackMap', {
-            screen: 'Map',
-            params: { name: randomFood.name }
-          })
+          navigation.navigate('StackMap', { screen: 'Map', params: { name: randomFood.name } });
         }}
       />
+      <Banner />
       <CategoryContainer>
         <FoodImageList
           category="Weather"

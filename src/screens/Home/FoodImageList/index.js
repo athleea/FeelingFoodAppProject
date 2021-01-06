@@ -32,7 +32,7 @@ const FoodImageList = ({category, tag, onPress, tagPress, icon, isLoaded}) => {
     let key = [];
     let food = [];
     
-    database().ref(`Tag/${category}/${tag}`).orderByValue().limitToLast(5).once('value', snapshot => {
+    database().ref(`Tag/${tag}/like/`).orderByValue().limitToLast(5).once('value', snapshot => {
       snapshot.forEach(value => {
         key.push(value.key)
       })

@@ -4,7 +4,7 @@ import Styled from 'styled-components/native'
 import FootSelector from './FoodSeletor'
 
 const Container = Styled.SafeAreaView`
-  
+  flex: 1;
 `
 const Title = Styled.Text`
   margin: 10px;
@@ -13,7 +13,7 @@ const Title = Styled.Text`
 `
 
 
-const Setting = ({ navigation, route }) => {
+const Setting = () => {
   return (
     <Container>
       <Title>제외시킬 음식을 선택해주세요</Title>

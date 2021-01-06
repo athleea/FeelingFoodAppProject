@@ -3,6 +3,6 @@
 > 이 앱은 [Create React App]으로 만들어졌습니다.
 
 ## Skills
-Javascript, React, React-Native, Firebase-RealtimeDatabase
+Javascript, React, React-Native, Firebase( RealtimeDatabase, Storage, Admob )
 
 
