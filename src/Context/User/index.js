@@ -4,6 +4,7 @@ import { Alert } from 'react-native'
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { REACT_APP_WEATHER_API_KEY } from '@env'
 
 const defaultContext = {
     location: {},
@@ -12,7 +13,7 @@ const defaultContext = {
     firstUser : undefined,
 };
 
-const API_KEY = '6b3df92331ad3dd3d5e970ffe1382aa5'
+const API_KEY = REACT_APP_WEATHER_API_KEY;
 
 const UserContext = createContext(defaultContext);
 
@@ -156,6 +157,7 @@ const UserContextProvider = ({ children }) => {
                 setFirstUser,
                 location,
                 isLoaded,
+                showError,
             }}>
             {children}
         </UserContext.Provider>

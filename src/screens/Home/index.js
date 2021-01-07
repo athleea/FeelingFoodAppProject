@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
-import { Dimensions, RefreshControl, Platform} from 'react-native'
+import { Dimensions, RefreshControl} from 'react-native'
 
 import FoodImageList from './FoodImageList'
 import FoodImage from '~/Components/FoodImage'
@@ -98,7 +98,7 @@ const Home = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
       <FoodImage
-        size={'cover'}
+        size={'center'}
         width={(Dimensions.get('window').width) - 10}
         height={250}
         fontsize={30}

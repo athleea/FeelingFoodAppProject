@@ -54,17 +54,7 @@ const StackCategory = () => {
                     },
                 }}
             />
-            <Stack.Screen
-                name="Chart"
-                component={Chart}
-                options={{
-                    title: '순위',
-                    headerTintColor: BarTitleColor,
-                    headerStyle: {
-                        backgroundColor: BarColor,
-                        borderBottomWidth: 0
-                    },
-                }} />
+            
         </Stack.Navigator>
     )
 }
@@ -169,6 +159,17 @@ const MainStackNavigator = () => {
                 component={Setting}
                 options={{
                     title: '설정',
+                    headerTintColor: BarTitleColor,
+                    headerStyle: {
+                        backgroundColor: BarColor,
+                        borderBottomWidth: 0
+                    },
+                }} />
+            <Stack.Screen
+                name="Chart"
+                component={Chart}
+                options={{
+                    title: '순위',
                     headerTintColor: BarTitleColor,
                     headerStyle: {
                         backgroundColor: BarColor,

@@ -7,7 +7,9 @@ import Loading from '~/Components/Loading'
 import Styled from 'styled-components/native'
 import database from '@react-native-firebase/database'
 
-const Container = Styled.View``
+const Container = Styled.View`
+  flex: 1;
+`
 const TagButton = Styled.TouchableOpacity`
   flexDirection: row;
   align-items: center;

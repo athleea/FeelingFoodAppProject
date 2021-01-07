@@ -36,16 +36,18 @@ const FootSelector = () => {
 
     useEffect(() => {
         initFoodData();
-        // initExcludeFood();
+        initExcludeFood();
     }, [])
 
     return (
         <MultiSelect
+            styleMainWrapper={{margin: 10}}
+            fixedHeight={true}
             items={foodData}
             uniqueKey="name"
             onSelectedItemsChange={onSelectedItemsChange}
             selectedItems={selectedItems}
-            selectText="음식 선택"
+            selectText=" 음식 선택"
             searchInputPlaceholderText="음식 이름 검색"
             altFontFamily="ProximaNova-Light"
             tagRemoveIconColor="#28292b"
@@ -56,6 +58,7 @@ const FootSelector = () => {
             itemTextColor="#000"
             displayKey="name"
             searchInputStyle={{ color: '#28292b' }}
+            hideSubmitButton={true}
             submitButtonColor="#28292b"
             submitButtonText="제외"
         />

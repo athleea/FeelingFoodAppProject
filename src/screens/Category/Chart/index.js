@@ -116,8 +116,8 @@ const Chart = ({ navigation, route }) => {
   }
   return (
     <Container>
-      <Banner />
       <FlatList
+        ListHeaderComponent={<Banner />}
         data={data.foodlist}
         keyExtractor={(item, index) => {
           return `${item.id}-${index}`;

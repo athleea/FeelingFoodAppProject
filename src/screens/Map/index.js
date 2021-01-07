@@ -10,6 +10,7 @@ import { Picker } from '@react-native-picker/picker';
 import MapView, { Marker, PROVIDER_GOOGLE, Circle } from 'react-native-maps';
 import Styled from 'styled-components/native'
 import database from '@react-native-firebase/database'
+import { REACT_APP_KAKAO_API_KEY } from '@env'
 
 const Container = Styled.View`
   justify-content: center;
@@ -34,12 +35,12 @@ const ResearchText = Styled.Text`
   font-size: 15px;
 `
 
-const API_KEY = 'd7bfcb1ceec975e2c1a8f6ce48e1abde'
+const API_KEY = REACT_APP_KAKAO_API_KEY;
 const URL = 'https://dapi.kakao.com/v2/local/search/keyword.json?page=45&size=15&sort=accuracy&category_group_code=FD6'
 
 const Map = ({ navigation, route }) => {
 
-  const { location } = useContext(UserContext)
+  const { location, showError } = useContext(UserContext)
 
   const [region, setRegion] = useState({
     latitude: location.latitude,
@@ -71,6 +72,7 @@ const Map = ({ navigation, route }) => {
     })
     .catch(error => {
       console.log(error);
+      showError('음식점 정보를 가져오는데 실패했습니다');
     });
   }
 
@@ -114,8 +116,10 @@ const Map = ({ navigation, route }) => {
     )
   }
   const scorllToFirst = () => {
-    if(marker.length > 0){
+    if(marker && marker.length > 0){
       flatlist.scrollToIndex({animated: true, index: 0});
+    }else{
+      showError('음식점 정보를 가져오는데 실패했습니다')
     }
   }
   return (

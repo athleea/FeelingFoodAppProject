@@ -8,7 +8,7 @@ const adUnitId = Platform.OS === 'ios' ? 'ca-app-pub-7590325598388885/5420344882
 const Banner = () => {
   return (
     <BannerAd
-      unitId={TestIds.BANNER}
+      unitId={adUnitId}
       size={BannerAdSize.FULL_BANNER}
       requestOptions={{
         requestNonPersonalizedAdsOnly: true,
