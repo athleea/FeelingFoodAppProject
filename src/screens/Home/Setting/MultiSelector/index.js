@@ -11,8 +11,7 @@ const FootSelector = () => {
 
     const initFoodData = () => {
         database().ref('/Food').once('value', snapshot => {
-            let data = snapshot.val();
-            setFoodData(data);
+            setFoodData(snapshot.val());
         });
     }
     const initExcludeFood = async() => {
@@ -43,7 +42,7 @@ const FootSelector = () => {
         <MultiSelect
             styleMainWrapper={{margin: 10}}
             fixedHeight={true}
-            items={foodData}
+            items={Object.values(foodData)}
             uniqueKey="name"
             onSelectedItemsChange={onSelectedItemsChange}
             selectedItems={selectedItems}

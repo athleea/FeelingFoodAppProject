@@ -31,23 +31,20 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
 
-  const getExcludeFood = async(array) => {
+  const getExcludeFood = async(foodList) => {
+    let foods = foodList;
+
     await AsyncStorage.getItem('food', (error, result) => {
       if(result){
         const excludeFood = JSON.parse(result);
         
         excludeFood.forEach(element => {
-          const itemIndex = array.findIndex( item => { return item.name === element})
-          if(itemIndex > -1) array.splice(itemIndex, 1);
+          delete foods[element]
         });
-
-        let index = Math.floor(Math.random() * array.length);
-        console.log(array[index]);
-        setRandomFood(array[index]);
-      }else{
-        let index = Math.floor(Math.random() * array.length);
-        setRandomFood(array[index]);
       }
+      let foodKey = Object.keys(foods)
+      let index = Math.floor(Math.random() * foodKey.length);
+      setRandomFood(foods[foodKey[index]]);
     });
   }
 

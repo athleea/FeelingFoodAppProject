@@ -78,12 +78,7 @@ const Map = ({ navigation, route }) => {
 
   const initDropdownList = () => {
     database().ref('/Food/').once('value', snapshot => {
-      let list = [];
-      let value = snapshot.val()
-      value.map(e => {
-        list.push(e.name)
-      })
-      setFood(list)
+      setFood(Object.keys(snapshot.val()))
     });
   }
 

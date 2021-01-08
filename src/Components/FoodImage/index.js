@@ -21,6 +21,7 @@ const FoodName = Styled.Text`
 const FoodImage = ({food, onPress, width, height, size, fontsize}) => {
 
     return(
+        food ? 
         <Container>
             <ImageView
                 onPress={onPress}>
@@ -34,7 +35,7 @@ const FoodImage = ({food, onPress, width, height, size, fontsize}) => {
                     source={{ uri: food.url }}/>
             </ImageView>
             <FoodName style={{fontSize: fontsize}}>{food.name}</FoodName>
-        </Container>
+        </Container> : <></>
     )
 }
 

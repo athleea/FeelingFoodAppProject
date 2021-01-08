@@ -65,6 +65,17 @@ const Choice = () => {
 
     let mount = true;
 
+    const initData = () => {
+        database().ref('/').once('value').then(snapshot => {
+            if (mount) {
+                setData({
+                    tag: snapshot.val()['Tag'],
+                    food: snapshot.val()['Food']
+                });
+                randomData(snapshot.val()['Tag'], snapshot.val()['Food']);
+            }
+        });
+    }
     const getRandomNumber = (obj) => {
         let num = [0, 0, 0, 0];
         for (let i = 0; i < num.length; i++) {
@@ -78,38 +89,29 @@ const Choice = () => {
         }
         return num
     }
-    const initData = () => {
-        database().ref('/').once('value').then(snapshot => {
-            if (mount) {
-                setData({
-                    tag: snapshot.val()['Tag'],
-                    food: snapshot.val()['Food']
-                });
-                randomData(snapshot.val()['Tag'], snapshot.val()['Food']);
-            }
-        });
-    }
+    
     const randomData = (tag, food) => {
         let array = [];
-        let key =  Object.keys(tag);
-        let num = getRandomNumber(food);
+        let tagKey =  Object.keys(tag);
+        let foodKey = Object.keys(food);
+
+        let num = getRandomNumber(foodKey);
         num.forEach(index => {
-            array.push(food[index]);
+            array.push(food[foodKey[index]]);
         });
-        setMainTag(key[Math.floor(Math.random() * key.length)]);
+        setMainTag(tagKey[Math.floor(Math.random() * tagKey.length)]);
         setMainFood(array);
     }
 
-    const saveData = async (id) => {
+    const saveData = async (name) => {
         setCount(count + 1);
-        const reference = database().ref(`/Tag/${mainTag}/like/${id}`);
+        const reference = database().ref(`/Tag/${mainTag}/like/${name}`);
         return await reference.transaction(currentLikes => {
             if (currentLikes === null) {
                 return 1;
             }
             return currentLikes + 1;
         });
-
     }
 
     useEffect(() => {
@@ -127,7 +129,7 @@ const Choice = () => {
             <FoodImage
                 food={item}
                 onPress={() => {
-                    saveData(item.id).then(async () => {
+                    saveData(item.name).then(async () => {
                         if (firstUser && count >= 4) {
                             await AsyncStorage.setItem('user', 'true');
                             setFirstUser(false);

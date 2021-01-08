@@ -41,8 +41,9 @@ const FoodImageList = ({category, tag, onPress, tagPress, icon, isLoaded}) => {
       key.reverse();
     }).then( () => {
         database().ref(`Food/`).once('value', snapshot=>{
-          key.forEach(val => {
-              food.push(snapshot.child(val).val())
+          let foodList = snapshot.val();
+          key.forEach(element => {
+              food.push(foodList[element])
           });
           setData(food);
       });
