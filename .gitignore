@@ -66,8 +66,10 @@ buck-out/
 
 #API_KEY
 .env
-android/app/src/main/AndroidManifest.xml
-android/app/build.gradle
 
 # Android Profiling
 *.hprof
+
+#
+android/app/src/main/AndroidManifest.xml
+android/gradle.properties
